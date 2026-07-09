@@ -1,44 +1,132 @@
 import { motion } from "framer-motion";
+import { CalendarDays, RefreshCw } from "lucide-react";
 
 export default function PageHeader({
   title,
   subtitle,
+
   buttonText,
   buttonIcon: ButtonIcon,
   onButtonClick,
+
   children,
   actions,
+
+  variant = "default",
+
+  date = new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }),
+
+  onRefresh,
 }) {
+  const isDashboard = variant === "dashboard";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-wrap items-center justify-between gap-1.5 mb-2"
+      className={`
+        flex
+        items-start
+        justify-between
+        flex-wrap
+        ${isDashboard ? "mb-2" : "mb-2"}
+      `}
     >
-      {/* Left Content */}
-      <div className="leading-none">
-        <h1 className="text-base font-semibold leading-none text-gray-900">
+      {/* Left */}
+      <div className="min-w-0">
+
+        <h1
+          className={
+            isDashboard
+              ? "text-[24px] font-bold tracking-tight leading-none text-gray-900"
+              : "text-base font-semibold leading-none text-gray-900"
+          }
+        >
           {title}
         </h1>
 
         {subtitle && (
-          <p className="mt-0 text-[10px] leading-3 text-gray-500">
+          <p
+            className={
+              isDashboard
+                ? "mt-1 text-[12px] leading-4 text-gray-500 max-w-3xl"
+                : "mt-0 text-[10px] leading-3 text-gray-500"
+            }
+          >
             {subtitle}
           </p>
         )}
+
       </div>
 
-      {/* Right Actions */}
-      <div className="flex items-center gap-1">
-        {children ? (
+      {/* Right */}
+
+      <div className="flex items-center gap-2">
+
+        {isDashboard ? (
+          <>
+            {/* Date */}
+
+            <div
+              className="
+                flex
+                items-center
+                gap-2
+                rounded-lg
+                border
+                border-gray-200
+                bg-white
+                px-3
+                py-1.5
+                shadow-sm
+              "
+            >
+              <CalendarDays
+                className="h-4 w-4 text-gray-500"
+              />
+
+              <span className="text-[12px] font-medium text-gray-700">
+                {date}
+              </span>
+            </div>
+
+            {/* Refresh */}
+
+            <button
+              onClick={onRefresh}
+              className="
+                flex
+                h-8
+                items-center
+                gap-2
+                rounded-lg
+                bg-blue-600
+                px-3
+                text-[12px]
+                font-semibold
+                text-white
+                shadow-sm
+                transition
+                hover:bg-blue-700
+              "
+            >
+              <RefreshCw className="h-4 w-4" />
+
+              Refresh
+            </button>
+          </>
+        ) : children ? (
           children
         ) : actions ? (
           actions
         ) : (
           buttonText && (
             <button
-              type="button"
               onClick={onButtonClick}
               className="
                 flex
@@ -52,18 +140,16 @@ export default function PageHeader({
                 font-medium
                 text-white
                 shadow-sm
-                transition
                 hover:bg-blue-700
               "
             >
-              {ButtonIcon && (
-                <ButtonIcon className="h-3 w-3" />
-              )}
+              {ButtonIcon && <ButtonIcon className="h-3 w-3" />}
 
               {buttonText}
             </button>
           )
         )}
+
       </div>
     </motion.div>
   );

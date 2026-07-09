@@ -3,10 +3,10 @@ import {
   LayoutDashboard, Users, Shield, Key, Lock, Building2, Building,
   Layers, Boxes, Briefcase, Hash, CalendarDays, Coins, FileBarChart,
   Clock, UploadCloud, Activity, CheckCircle2, GitCompare, LayoutGrid,
-  Eye, Filter, Download, Calendar, DollarSign, Bell, ScrollText,
-  Settings, Info, BarChart3 } from "lucide-react";
+  Eye, Filter, Download, Calendar, DollarSign, Bell, ScrollText,UserCheck,
+  UserX,UserRoundX,UserCog,Settings, Info, BarChart3 } from "lucide-react"; 
   
-export const users = [
+ export const users = [
   { id: 1, code: "EMP001", name: "John Doe", email: "john.doe@fjgroup.com", department: "Finance", role: "CFO", status: "Active", lastLogin: "20 Jun 2026 08:15 AM", jobTitle: "Chief Financial Officer", phone: "+971 50 123 4567", location: "Dubai, UAE", dateOfJoining: "15 Jan 2022", emailVerified: true, mfaEnabled: true },
   { id: 2, code: "EMP002", name: "Jane Smith", email: "jane.smith@fjgroup.com", department: "Finance", role: "Finance Admin", status: "Active", lastLogin: "20 Jun 2026 07:40 AM", jobTitle: "Finance Administrator", phone: "+971 50 222 1122", location: "Dubai, UAE", dateOfJoining: "04 Mar 2022", emailVerified: true, mfaEnabled: true },
   { id: 3, code: "EMP003", name: "Michael Brown", email: "michael.brown@fjgroup.com", department: "IT", role: "System Admin", status: "Active", lastLogin: "20 Jun 2026 09:10 AM", jobTitle: "System Administrator", phone: "+971 50 333 3344", location: "Abu Dhabi, UAE", dateOfJoining: "12 Jul 2021", emailVerified: true, mfaEnabled: true },
@@ -30,11 +30,51 @@ export const legalGroups = ["FJ Group", "FJ Holdings", "FJ International"];
 export const statuses = ["All", "Active", "Inactive", "Locked"];
 
 export const stats = [
-  { id: "total", title: "Total Users", value: 45, color: "blue", trend: "8% vs last month", trendDir: "up" },
-  { id: "active", title: "Active Users", value: 32, color: "green", trend: "12% vs last month", trendDir: "up" },
-  { id: "inactive", title: "Inactive Users", value: 13, color: "orange", trend: "7% vs last month", trendDir: "down" },
-  { id: "locked", title: "Locked Users", value: 2, color: "purple", trend: "33% vs last month", trendDir: "down" },
-  { id: "noRole", title: "Users Without Role", value: 3, color: "teal", trend: "No change", trendDir: "flat" },
+  {
+    id: "total",
+    title: "Total Users",
+    value: 45,
+    icon: Users,
+    color: "blue",
+    trend: "8% vs last month",
+    trendDir: "up",
+  },
+  {
+    id: "active",
+    title: "Active Users",
+    value: 32,
+    icon: UserCheck,
+    color: "green",
+    trend: "12% vs last month",
+    trendDir: "up",
+  },
+  {
+    id: "inactive",
+    title: "Inactive Users",
+    value: 13,
+    icon: UserX,
+    color: "orange",
+    trend: "7% vs last month",
+    trendDir: "down",
+  },
+  {
+    id: "locked",
+    title: "Locked Users",
+    value: 2,
+    icon: UserRoundX, // or Lock if you prefer
+    color: "purple",
+    trend: "33% vs last month",
+    trendDir: "down",
+  },
+  {
+    id: "noRole",
+    title: "Users Without Role",
+    value: 3,
+    icon: UserCog,
+    color: "teal",
+    trend: "No change",
+    trendDir: "flat",
+  },
 ];
 
  export const sections = [

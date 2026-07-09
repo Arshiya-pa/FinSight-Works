@@ -12,24 +12,19 @@ export default function FooterNote({
 
       <Info className="h-3.5 w-3.5 shrink-0 text-blue-600" />
 
-
       <p className="min-w-0 flex-1 text-gray-600 leading-4">
         <span className="font-semibold text-gray-800">
           {title}
         </span>{" "}
         {message}
       </p>
-
-
       {(lastUpdated || showRefresh) && (
         <div className="flex items-center gap-1.5 whitespace-nowrap text-[10px] text-gray-500">
-
           {lastUpdated && (
             <span>
               Last Updated: {lastUpdated}
             </span>
           )}
-
           {showRefresh && (
             <button
               onClick={onRefresh}
@@ -41,7 +36,6 @@ export default function FooterNote({
 
         </div>
       )}
-
     </div>
   );
 }
