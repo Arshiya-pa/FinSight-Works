@@ -1,6 +1,5 @@
 import React from "react";
 
-import AdminLayout from "../components/layout/AdminLayout";
 import PageHeader from "../components/common/PageHeader";
 import DashboardKPICard from "../components/AdminDashboard/DashboardKPICard";
 import ETLStatusTable from "../components/AdminDashboard/ETLStatusTable";
@@ -13,74 +12,102 @@ import FooterNote from "../components/FooterNote";
 
 import { kpiCards } from "../data/adminDashboardData";
 
-export function AdminMainDashboard() {
+
+export default function AdminMainDashboard() {
+
   return (
-    <AdminLayout
-      activeMenu="Dashboard"
-      breadcrumbs={[" "]}
-      company="FJ Group"
-      initials="SA"
-      userName="Super Admin"
-      userRole="Super Administrator"
-      notificationCount={5}
-    >
-      {/* Main Wrapper */}
-      <div className="space-y-1">
 
-        {/* Header */}
-        <PageHeader
-          variant="dashboard"
-          title="Dashboard"
-          subtitle="Welcome back, Super Admin! Here's what's happening with FinSight."
-          onRefresh={() => console.log("Refresh Dashboard")}
-        />
+    <div className="space-y-1">
 
-        {/* KPI Cards */}
-        <div className="pr-28">
-          <div className="grid grid-cols-5 gap-0.5">
-            {kpiCards.map((card) => (
-              <DashboardKPICard
-                key={card.title}
-                {...card}
-              />
-            ))}
-          </div>
-        </div>
+      {/* Header */}
+      <PageHeader
+        variant="dashboard"
+        title="Dashboard"
+        subtitle="Welcome back, Super Admin! Here's what's happening with FinSight."
+        onRefresh={() => console.log("Refresh Dashboard")}
+      />
 
-        {/* ETL + Recent + Quick */}
-        <div className="grid grid-cols-1 lg:grid-cols-10 gap-2">
 
-          <div className="lg:col-span-4">
-            <ETLStatusTable />
-          </div>
+      {/* KPI Cards */}
+      <div className="pr-28">
 
-          <div className="lg:col-span-6 grid grid-cols-2 gap-2">
-            <RecentActivity />
-            <QuickActions />
-          </div>
+        <div className="grid grid-cols-5 gap-0.5">
+
+          {kpiCards.map((card) => (
+
+            <DashboardKPICard
+              key={card.title}
+              {...card}
+            />
+
+          ))}
 
         </div>
-
-        {/* Bottom Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-
-          <TrendChart />
-
-          <QualityChart />
-
-          <AlertsCard />
-
-        </div>
-
-        {/* Footer */}
-        <FooterNote
-          title="Note:"
-          message="All data in dashboard is as per the selected date range."
-          lastUpdated="20 Jun 2026 10:15 AM"
-          onRefresh={() => console.log("Refresh clicked")}
-        />
 
       </div>
-    </AdminLayout>
+
+
+      {/* ETL + Recent + Quick */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-10 gap-2">
+
+
+        <div className="lg:col-span-4">
+
+          <ETLStatusTable />
+
+        </div>
+
+
+
+        <div className="lg:col-span-6 grid grid-cols-2 gap-2">
+
+          <RecentActivity />
+
+          <QuickActions />
+
+        </div>
+
+
+      </div>
+
+
+
+      {/* Bottom Row */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+
+
+        <TrendChart />
+
+
+        <QualityChart />
+
+
+        <AlertsCard />
+
+
+      </div>
+
+
+
+      {/* Footer */}
+
+      <FooterNote
+
+        title="Note:"
+
+        message="All data in dashboard is as per the selected date range."
+
+        lastUpdated="20 Jun 2026 10:15 AM"
+
+        onRefresh={() => console.log("Refresh clicked")}
+
+      />
+
+
+    </div>
+
   );
+
 }

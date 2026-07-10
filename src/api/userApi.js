@@ -2,7 +2,7 @@
 import api from "./axios";
 
 export const getUsers = () => {
-    return api.get("/admin/users");
+  return api.get("/admin/users");
 };
 
 export const getSystemStatus = () => {
@@ -10,9 +10,21 @@ export const getSystemStatus = () => {
 };
 
 export const getRoles = () => {
-   return api.get("/admin/lookups/roles");
+  return api.get("/admin/roles");
 };
 
 export const getLegalGroups = () => {
-  return api.get("/admin/lookups/legal-groups");
+  return api.get("/admin/master/legal-groups");
+};
+
+export const addUser = (data) => {
+  return api.post("/admin/users", data);
+};
+
+export const updateUser = (userProfileId, data) => {
+  return api.put(`/admin/users/${userProfileId}`, data);
+};
+
+export const updateUserStatus = (userProfileId, payload) => {
+  return api.put(`/admin/users/${userProfileId}`, payload);
 };

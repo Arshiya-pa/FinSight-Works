@@ -77,44 +77,154 @@ export const stats = [
   },
 ];
 
- export const sections = [
-  { title: "Dashboard", items: [{ label: "Dashboard", icon: LayoutDashboard }] },
-  { title: "Security", items: [
-    { label: "Users", icon: Users},
-    { label: "Roles", icon: Shield },
-    { label: "User Access", icon: Key },
-    { label: "Permissions", icon: Lock },
-  ]},
-  { title: "Master Data", items: [
-    { label: "Master Data", icon: Building2  },
-    { label: "Legal Groups", icon: Building2 },
-    { label: "Legal Entities", icon: Building },
-    { label: "Parent Divisions", icon: Layers },
-    { label: "Subdivisions", icon: Boxes },
-    { label: "Business Units", icon: Briefcase },
-    { label: "Analysis Codes", icon: Hash },
-    { label: "Accounting Periods", icon: CalendarDays },
-    { label: "Currency Master", icon: Coins },
-  ]},
-  { title: "Data Integration", items: [
-    { label: "Report Configuration", icon: FileBarChart },
-    { label: "Scheduler", icon: Clock },
-    { label: "Upload Centre", icon: UploadCloud },
-    { label: "ETL Monitor", icon: Activity },
-    { label: "Data Quality", icon: CheckCircle2 },
-    { label: "Reconciliation", icon: GitCompare },
-  ]},
-  { title: "Report Configuration", items: [
-    { label: "Dashboard Modules", icon: LayoutGrid },
-    { label: "Report Visibility", icon: Eye },
-    { label: "Default Filters", icon: Filter },
-    { label: "Export Configuration", icon: Download },
-  ]},
-  { title: "System", items: [
-    { label: "Fiscal Calendar", icon: Calendar },
-    { label: "Currency Rates", icon: DollarSign },
-    { label: "Notification Settings", icon: Bell },
-    { label: "Audit Log", icon: ScrollText },
-    { label: "System Settings", icon: Settings },
-  ]},
+
+export const sections = [
+  {
+    title: "Dashboard",
+    items: [
+      {
+        label: "Dashboard",
+        path: "/admin/dashboard",
+        icon: LayoutDashboard,
+      },
+    ],
+  },
+
+  {
+    title: "Security",
+    items: [
+      {
+        label: "Users",
+        path: "/admin/users",
+        icon: Users,
+      },
+
+      {
+        label: "Roles",
+        path: "/admin/roles",
+        icon: Shield,
+      },
+
+      // Keep unchanged
+      { label: "User Access", icon: Key },
+      { label: "Permissions", icon: Lock },
+    ],
+  },
+
+
+  {
+    title: "Master Data",
+    items: [
+      {
+        label: "Master Data",
+        path: "/admin/master-data",
+        icon: Building2,
+      },
+
+      // Keep unchanged
+      { label: "Legal Groups", icon: Building2 },
+      { label: "Legal Entities", icon: Building },
+      { label: "Parent Divisions", icon: Layers },
+      { label: "Subdivisions", icon: Boxes },
+      { label: "Business Units", icon: Briefcase },
+      { label: "Analysis Codes", icon: Hash },
+      { label: "Accounting Periods", icon: CalendarDays },
+      { label: "Currency Master", icon: Coins },
+    ],
+  },
+
+
+  // Keep everything below unchanged
+
+  {
+    title: "Data Integration",
+    items: [
+      { label: "Report Configuration", icon: FileBarChart },
+      { label: "Scheduler", icon: Clock },
+      { label: "Upload Centre", icon: UploadCloud },
+      { label: "ETL Monitor", icon: Activity },
+      { label: "Data Quality", icon: CheckCircle2 },
+      { label: "Reconciliation", icon: GitCompare },
+    ],
+  },
+
+  {
+    title: "Report Configuration",
+    items: [
+      { label: "Dashboard Modules", icon: LayoutGrid },
+      { label: "Report Visibility", icon: Eye },
+      { label: "Default Filters", icon: Filter },
+      { label: "Export Configuration", icon: Download },
+    ],
+  },
+
+  {
+    title: "System",
+    items: [
+      { label: "Fiscal Calendar", icon: Calendar },
+      { label: "Currency Rates", icon: DollarSign },
+      { label: "Notification Settings", icon: Bell },
+      { label: "Audit Log", icon: ScrollText },
+      { label: "System Settings", icon: Settings },
+    ],
+  },
 ];
+//  export const sections = [
+//  {
+//   title: "Dashboard",
+//   items: [
+//     {
+//       label: "Dashboard",
+//       path: "/admin/dashboard",
+//       icon: LayoutDashboard
+//     }
+//   ]
+// },
+//   { title: "Security", items: [
+//   {
+//   label: "Users",
+//   path: "/admin/users",
+//   icon: Users
+// },
+
+// {
+//   label: "Roles",
+//   path: "/admin/roles",
+//   icon: Shield
+// },
+//     { label: "User Access", icon: Key },
+//     { label: "Permissions", icon: Lock },
+//   ]},
+//   { title: "Master Data", items: [
+//     { label: "Master Data", icon: Building2  },
+//     { label: "Legal Groups", icon: Building2 },
+//     { label: "Legal Entities", icon: Building },
+//     { label: "Parent Divisions", icon: Layers },
+//     { label: "Subdivisions", icon: Boxes },
+//     { label: "Business Units", icon: Briefcase },
+//     { label: "Analysis Codes", icon: Hash },
+//     { label: "Accounting Periods", icon: CalendarDays },
+//     { label: "Currency Master", icon: Coins },
+//   ]},
+//   { title: "Data Integration", items: [
+//     { label: "Report Configuration", icon: FileBarChart },
+//     { label: "Scheduler", icon: Clock },
+//     { label: "Upload Centre", icon: UploadCloud },
+//     { label: "ETL Monitor", icon: Activity },
+//     { label: "Data Quality", icon: CheckCircle2 },
+//     { label: "Reconciliation", icon: GitCompare },
+//   ]},
+//   { title: "Report Configuration", items: [
+//     { label: "Dashboard Modules", icon: LayoutGrid },
+//     { label: "Report Visibility", icon: Eye },
+//     { label: "Default Filters", icon: Filter },
+//     { label: "Export Configuration", icon: Download },
+//   ]},
+//   { title: "System", items: [
+//     { label: "Fiscal Calendar", icon: Calendar },
+//     { label: "Currency Rates", icon: DollarSign },
+//     { label: "Notification Settings", icon: Bell },
+//     { label: "Audit Log", icon: ScrollText },
+//     { label: "System Settings", icon: Settings },
+//   ]},
+// ];

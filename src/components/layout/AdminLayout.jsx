@@ -37,6 +37,7 @@
 //   );
 // }
 
+import { Outlet } from "react-router-dom";
 import SidebarAdmin from "./SidebarAdmin";
 import NavbarAdmin from "./NavbarAdmin";
 
@@ -48,7 +49,6 @@ export default function AdminLayout({
   userName = "Super Admin",
   userRole = "Super Administrator",
   notificationCount = 0,
-  children,
 }) {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
@@ -69,7 +69,7 @@ export default function AdminLayout({
         {/* Page */}
         <main className="flex-1 overflow-hidden p-5">
           <div className="flex h-full flex-col">
-            {children}
+            <Outlet />
           </div>
         </main>
       </div>

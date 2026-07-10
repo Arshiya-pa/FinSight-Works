@@ -130,13 +130,13 @@ export default function PageHeader({
               onClick={onButtonClick}
               className="
                 flex
-                h-7
+                h-8
                 items-center
                 gap-1
                 rounded-md
                 bg-blue-600
                 px-3
-                text-[10px]
+                text-[12px]
                 font-medium
                 text-white
                 shadow-sm

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { Info } from "lucide-react";
 import {
   X,
   KeyRound,
@@ -9,7 +11,6 @@ import {
 
 import StatusBadge from "../StatusBadge";
 
-
 const tabs = [
   "Profile",
   "Roles & Access",
@@ -18,13 +19,9 @@ const tabs = [
 ];
 
 
-
 function Field({ label, value }) {
-
   return (
-
     <div className="py-0.5">
-
       <p className="
         text-[10px]
         font-medium
@@ -52,24 +49,16 @@ function Field({ label, value }) {
 
 }
 
-
-
-
 export default function UserDetails({
   user,
   onClose,
 }) {
 
-
   const [tab,setTab] = useState("Profile");
-
-
 
   if(!user){
     return null;
   }
-
-
 
   const initials = user.name
     ?.split(" ")
@@ -78,11 +67,7 @@ export default function UserDetails({
     .join("")
     .toUpperCase();
 
-
-
-
   return (
-
     <aside className="
       flex
       h-full
@@ -95,11 +80,7 @@ export default function UserDetails({
       bg-white
       shadow-sm
     ">
-
-
-
       {/* HEADER */}
-
       <div className="
         flex
         shrink-0
@@ -111,7 +92,6 @@ export default function UserDetails({
         py-2
       ">
 
-
         <h3 className="
           text-[13px]
           font-semibold
@@ -119,8 +99,6 @@ export default function UserDetails({
         ">
           User Details
         </h3>
-
-
 
         <button
           onClick={onClose}
@@ -131,18 +109,9 @@ export default function UserDetails({
             hover:bg-gray-100
           "
         >
-
           <X className="h-4 w-4"/>
-
         </button>
-
-
       </div>
-
-
-
-
-
 
       {/* PROFILE HEADER */}
 
@@ -156,8 +125,6 @@ export default function UserDetails({
         px-5
         py-2
       ">
-
-
 
         <div className="
           flex
@@ -176,20 +143,13 @@ export default function UserDetails({
 
         </div>
 
-
-
-
-
         <div className="min-w-0 flex-1">
-
 
           <div className="
             flex
             items-center
             gap-2
           ">
-
-
             <p className="
               truncate
               text-[13px]
@@ -199,34 +159,20 @@ export default function UserDetails({
               {user.name} ({user.code})
             </p>
 
-
-
-
             <StatusBadge
-
               label={user.status}
-
               tone={
                 user.status === "Active"
                 ? "green"
                 : "gray"
               }
-
               className="
                 px-2
                 py-0
                 text-[9px]
               "
-
             />
-
-
-
           </div>
-
-
-
-
 
           <p className="
             truncate
@@ -236,18 +182,8 @@ export default function UserDetails({
             {user.email}
           </p>
 
-
-
         </div>
-
-
       </div>
-
-
-
-
-
-
 
       {/* TABS */}
 
@@ -259,15 +195,10 @@ export default function UserDetails({
         px-2
       ">
 
-
         {tabs.map((item)=>(
-
           <button
-
             key={item}
-
             onClick={()=>setTab(item)}
-
             className={`
               border-b-2
               px-3
@@ -280,37 +211,21 @@ export default function UserDetails({
                 ? "border-blue-600 text-blue-600"
                 : "border-transparent text-gray-500"
               }
-
             `}
-
           >
-
             {item}
-
           </button>
-
-
         ))}
-
-
       </div>
 
 
-
-
-
-
-
       {/* CONTENT */}
-
       <div className="
         flex-1
         overflow-auto
         px-5
         py-3
       ">
-
-
 
         {tab==="Profile" && (
 
@@ -320,51 +235,39 @@ export default function UserDetails({
             gap-x-4
             gap-y-2
           ">
-
-
             <Field
               label="Employee Code"
               value={user.code}
             />
 
-
             <Field
               label="Date Of Joining"
               value={user.dateOfJoining}
             />
-
-
             <Field
               label="Department"
               value={user.department}
             />
-
 
             <Field
               label="Last Login"
               value={user.lastLogin}
             />
 
-
             <Field
               label="Job Title"
               value={user.jobTitle}
             />
-
 
             <Field
               label="Phone"
               value={user.phone}
             />
 
-
-
             <Field
               label="Location"
               value={user.location}
             />
-
-
 
             <Field
               label="Email Verified"
@@ -376,21 +279,15 @@ export default function UserDetails({
                   text-green-600
                   text-[11px]
                 ">
-
                   <CheckCircle2 className="h-3 w-3"/>
-
                   {
                     user.emailVerified
                     ? "Verified"
                     : "Not Verified"
                   }
-
                 </span>
               }
             />
-
-
-
             <Field
               label="MFA Status"
               value={
@@ -413,15 +310,8 @@ export default function UserDetails({
                 </span>
               }
             />
-
-
-
           </div>
-
-
         )}
-
-
 
         {tab!=="Profile" && (
 
@@ -437,16 +327,7 @@ export default function UserDetails({
           </div>
 
         )}
-
-
-
       </div>
-
-
-
-
-
-
 
       {/* FOOTER */}
 
@@ -461,79 +342,32 @@ export default function UserDetails({
         py-2
       ">
 
-
-
-        <button className="
-          flex
-          h-7
-          items-center
-          justify-center
-          gap-1
-          rounded-md
-          border
-          border-gray-200
-          text-[11px]
-        ">
-
+        <button  onClick={() => {
+           toast.custom(() => (
+       <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 shadow-lg">
+       <Info className="h-5 w-5 text-red-600" />
+       <span className="text-md font-medium text-blue-900">
+         Reset password will be available shortly.
+       </span>
+       </div>
+        )); }}
+         className="flex h-7 items-center justify-center gap-1 rounded-md border border-gray-200 text-[11px]">
           <KeyRound className="h-3 w-3"/>
-
           Reset Password
-
         </button>
 
-
-
-
-
-        <button className="
-          flex
-          h-7
-          items-center
-          justify-center
-          gap-1
-          rounded-md
-          border
-          border-red-200
-          text-[11px]
-          text-red-600
-        ">
-
+        <button className=" flex h-7 items-center justify-center gap-1 rounded-md border border-red-200
+          text-[11px] text-red-600 ">
           <UserX className="h-3 w-3"/>
-
           Deactivate
-
         </button>
 
-
-
-
-
-        <button className="
-          flex
-          h-7
-          items-center
-          justify-center
-          gap-1
-          rounded-md
-          bg-blue-600
-          text-[11px]
-          text-white
-        ">
-
+        <button className=" flex h-7 items-center justify-center gap-1 rounded-md bg-blue-600
+          text-[11px] text-white">
           <Edit className="h-3 w-3"/>
-
           Edit User
-
         </button>
-
-
-
       </div>
-
-
-
     </aside>
-
   );
-
 }

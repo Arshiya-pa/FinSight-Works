@@ -1,8 +1,8 @@
 
 
 import { useState, useMemo, useEffect } from "react";
-import { UserPlus, Users, UserCheck, UserX, ShieldAlert, UserCog, } from "lucide-react";
-
+import { UserPlus, Users, UserCheck, UserX, ShieldAlert, UserCog, Edit, } from "lucide-react";
+import toast from "react-hot-toast";
 import AdminLayout from "../components/layout/AdminLayout";
 import PageHeader from "../components/common/PageHeader";
 import FilterBar from "../components/common/FilterBar";
@@ -10,13 +10,14 @@ import StatCard from "../components/StatCard";
 import UserTable from "../components/users/UserTable";
 import UserDetails from "../components/users/UserDetails";
 import FooterNote from "../components/FooterNote";
+import AddUserModal from "../components/users/AddUserModal";
 
 import {
   stats,
   departments,
 } from "../data/dummyData";
 
-import { getUsers, getRoles, getLegalGroups } from "../api/userApi";
+import { getUsers, getRoles, getLegalGroups, updateUserStatus } from "../api/userApi";
 
 
 export default function UsersDashboard() {
@@ -26,12 +27,11 @@ export default function UsersDashboard() {
   const [search, setSearch] = useState("");
 
   const [status, setStatus] = useState("All");
-  const [userStatusFilter, setUserStatusFilter] = useState("All");
 
   const [role, setRole] = useState("All");
   const [roleOptions, setRoleOptions] = useState(["All"]);
 
-  const [department, setDepartment] = useState("All");
+  // const [department, setDepartment] = useState("All");
 
   const [legalGroup, setLegalGroup] = useState("All");
   const [legalGroupOptions, setLegalGroupOptions] = useState(["All"]);
@@ -40,7 +40,12 @@ export default function UsersDashboard() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [showEditUser, setShowEditUser] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+
   const [loading, setLoading] = useState(false);
+
   /* -------------------- PAGINATION -------------------- */
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -66,6 +71,7 @@ export default function UsersDashboard() {
         email: user.official_email,
         department: user.department ?? "-",
         role: user.role_code,
+        active: user.active, // <-- ADD THIS
         status: user.active ? "Active" : "Inactive",
         lastLogin: "-",
 
@@ -97,43 +103,57 @@ export default function UsersDashboard() {
       setLoading(false);
     }
   };
-
+console.log("........",status);
+console.log("----------",activeOnly);
   /* -------------------- FETCH ROLES -------------------- */
-  const fetchRoles = async () => {
-    try {
-      const response = await getRoles();
-      console.log("roles is", response.data.data);
-      const roles = response.data.data.map((item) => item.name);
-      setRoleOptions([
-        {
-          id: 0,
-          code: "All",
-          name: "All",
-        },
-        ...response.data.data,
-      ]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+ const fetchRoles = async () => {
+  try {
+    const response = await getRoles();
+    console.log(response.data);
+    const roles = response.data.map((item, index) => ({
+      id: index + 1,
+      code: item.role_code,
+      name: item.role_name,
+    }));
+    setRoleOptions([
+      {
+        id: 0,
+        code: "All",
+        name: "All",
+      },
+      ...roles,
+    ]);
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   /* -------------------- FETCH LEGAL GROUPS -------------------- */
   const fetchLegalGroups = async () => {
-    try {
-      const response = await getLegalGroups();
-      console.log("Legal Groups:", response.data);
-      setLegalGroupOptions([
-        {
-          id: 0,
-          code: "All",
-          name: "All",
-        },
-        ...response.data.data,
-      ]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    const response = await getLegalGroups();
+
+    console.log("Legal Groups:", response.data);
+
+    const groups = response.data.map((item) => ({
+      id: item.legal_group_id,
+      code: item.legal_group_code,
+      name: item.legal_group_name,
+    }));
+
+    setLegalGroupOptions([
+      {
+        id: 0,
+        code: "All",
+        name: "All",
+      },
+      ...groups,
+    ]);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   /* -------------------- PAGE LOAD -------------------- */
 
@@ -149,7 +169,7 @@ export default function UsersDashboard() {
     search,
     status,
     role,
-    department,
+    //department,
     legalGroup,
     activeOnly,
   ]);
@@ -160,7 +180,7 @@ export default function UsersDashboard() {
     setSearch("");
     setStatus("All");
     setRole("All");
-    setDepartment("All");
+    // setDepartment("All");
     setLegalGroup("All");
     setActiveOnly(false);
   };
@@ -168,7 +188,16 @@ export default function UsersDashboard() {
   /* -------------------- FILTER USERS -------------------- */
 
   const filteredUsers = useMemo(() => {
+
+    console.log("Toggle:", activeOnly);
+
     return users.filter((user) => {
+
+      console.log(
+        user.name,
+        user.status,
+        activeOnly
+      );
 
       const matchesSearch =
         (user.name || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -181,38 +210,29 @@ export default function UsersDashboard() {
       const matchesRole =
         role === "All" || user.role === role;
 
-      const matchesDepartment =
-        department === "All" ||
-        user.department === department;
-
       const matchesLegalGroup =
         legalGroup === "All" ||
         user.legalGroup === legalGroup;
 
       const matchesActive =
-  userStatusFilter === "All" ||
-  user.status === userStatusFilter;
+        !activeOnly || user.status === "Active";
+
+      // console.log(
+      //   "matchesActive:",
+      //   matchesActive
+      // );
 
       return (
         matchesSearch &&
         matchesStatus &&
         matchesRole &&
-        matchesDepartment &&
         matchesLegalGroup &&
         matchesActive
       );
 
     });
 
-  }, [
-    users,
-    search,
-    status,
-    role,
-    department,
-    legalGroup,
-    activeOnly,
-  ]);
+  }, [users, search, status, role, legalGroup, activeOnly]);
   /* -------------------- PAGINATION -------------------- */
 
   const totalPages = Math.max(
@@ -252,13 +272,84 @@ export default function UsersDashboard() {
     setPageSize(Number(e.target.value));
     setCurrentPage(1);
   };
+  /* -------------------- EDIT USER FORM-------------------- */
+  const handleEdit = (user) => {
+    toast.custom((t) => (
+      <div className="w-90 rounded-xl border border-gray-200 bg-white p-4 shadow-xl">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+            <Edit className="h-5 w-5 text-blue-600" />
+          </div>
 
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Edit User
+            </h3>
+
+            <p className="mt-1 text-xs text-gray-600">
+              Do you want to edit{" "}
+              <span className="font-semibold">
+                {user.name}
+              </span>
+              ?
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => toast.dismiss(t.id)}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium hover:bg-gray-100"
+              >Cancel</button>
+
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  setSelectedUser(user);
+                  setShowEditUser(true);
+                }}
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+              >Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    ));
+  };
+
+
+  const handleToggleStatus = async (user) => {
+    try {
+      const payload = {
+        employee_code: user.raw.employee_code,
+        employee_name: user.raw.employee_name,
+        official_email: user.raw.official_email,
+        designation: user.raw.designation,
+        department: user.raw.department,
+        reporting_manager_code: user.raw.reporting_manager_code,
+        role_code: user.raw.role_code,
+        active: !user.active,
+      };
+
+      console.log("Payload:", payload);
+      console.log(user.raw);
+
+      await updateUserStatus(user.id, payload);
+
+      toast.success(
+        user.active
+          ? "User deactivated successfully"
+          : "User activated successfully"
+      );
+
+      await fetchUsers();
+    } catch (error) {
+      console.error(error.response?.data);
+      toast.error("Unable to update user status");
+    }
+  };
   /* -------------------- KPI CARDS -------------------- */
 
   const statCards = stats.map((item) => {
-
     let icon = Users;
-
     switch (item.id) {
 
       case "total":
@@ -292,39 +383,43 @@ export default function UsersDashboard() {
     };
 
   });
-
+  console.log("Active Only:", activeOnly);
   /* -------------------- LOADING -------------------- */
 
-  if (loading) {
-    return (
-      <AdminLayout activeMenu="Users">
-        <div className="p-6 text-sm">
-          Loading Users...
-        </div>
-      </AdminLayout>
-    );
-  }
+if (loading) {
+  return (
+    <div className="p-6 text-sm">
+      Loading Users...
+    </div>
+  );
+}
   console.log("Current Selected User:", selectedUser);
   /* ---------- PART 2 STARTS WITH RETURN ---------- */
   return (
-    <AdminLayout
-      activeMenu="Users"
-      breadcrumbs={["Admin", "Security", "Users"]}
-      company="FJ Group"
-      initials="SA"
-      userName="Super Admin"
-      userRole="Super Administrator"
-      notificationCount={3}
-    >
 
       <div className="flex flex-col gap-0.5">
         {/* HEADER */}
+        <div>
         <PageHeader
           title="Users"
           subtitle="Manage application users, their roles and account status."
           buttonText="Add User"
           buttonIcon={UserPlus}
-          onButtonClick={() => console.log("Add User")}
+          onButtonClick={() => setShowAddUser(true)}
+        />
+
+        <AddUserModal
+          open={showAddUser || showEditUser}
+          editUser={selectedUser}
+          onClose={() => {
+            setShowAddUser(false);
+            setShowEditUser(false);
+          }}
+          onSuccess={() => {
+            fetchUsers();
+            setShowAddUser(false);
+            setShowEditUser(false);
+          }}
         />
         {/* KPI CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-0.5">
@@ -354,12 +449,12 @@ export default function UsersDashboard() {
               value: role,
               onChange: (e) => setRole(e.target.value),
             },
-            {
-              label: "Department",
-              options: departments,
-              value: department,
-              onChange: (e) => setDepartment(e.target.value),
-            },
+            // {
+            //   label: "Department",
+            //   options: departments,
+            //   value: department,
+            //   onChange: (e) => setDepartment(e.target.value),
+            // },
             {
               label: "Legal Group",
               options: legalGroupOptions,
@@ -376,12 +471,12 @@ export default function UsersDashboard() {
 
         {/* TABLE + DETAILS */}
 
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-0.5">
-
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-0.5">
           <UserTable
             users={currentUsers}
             total={filteredUsers.length}
-
+            onEdit={handleEdit}
+            onToggleStatus={handleToggleStatus}
             currentPage={currentPage}
             totalPages={totalPages}
             pageSize={pageSize}
@@ -413,16 +508,24 @@ export default function UsersDashboard() {
 
         </div>
       </div>
-
+  
       {/* FOOTER */}
-      <div className="fixed bottom-0 left-55 right-0 border-t border-gray-200 bg-white px-4 py-2 shadow-sm">
+      <div className="fixed bottom-0 left-55 right-0 border-t border-gray-200 bg-white px-3 py-1 shadow-sm">
         <FooterNote
           title="Note:"
           message="Deactivated users will not be able to login. Locked users are blocked due to multiple failed login attempts."
           lastUpdated="20 Jun 2026 10:15 AM"
           onRefresh={() => console.log("Refresh clicked")}
         />
-      </div>
-    </AdminLayout>
+       </div>
+      <AddUserModal
+        open={showAddUser}
+        onClose={() => setShowAddUser(false)}
+        onSuccess={() => {
+          fetchUsers();
+          setShowAddUser(false);
+        }}
+      />
+    </div>
   );
 }

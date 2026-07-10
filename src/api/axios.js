@@ -9,7 +9,7 @@ const api = axios.create({
 });
 localStorage.setItem(
     "token",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ6ZW5pdGhAZmp0Y28uY29tIiwidXNlcl9pZCI6Miwicm9sZSI6IkFkbWluIiwiZnVsbF9uYW1lIjoiWmVuaXRoIFVzZXIiLCJleHAiOjE3ODM2MzI4MzN9.rMGO6wL6bh37-4mkwpJfoeTxpCDr8UzYnNjTdNZAGcI"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ6ZW5pdGhAZmp0Y28uY29tIiwidXNlcl9pZCI6Miwicm9sZSI6IkFkbWluIiwiZnVsbF9uYW1lIjoiWmVuaXRoIFVzZXIiLCJleHAiOjE3ODM2ODc0MTJ9.EfjiajLe2FimUpxaV1bnSq_dNt0OHj-lX9HnVEwSUZE"
 );
 // Automatically attach JWT token
 api.interceptors.request.use((config) => {

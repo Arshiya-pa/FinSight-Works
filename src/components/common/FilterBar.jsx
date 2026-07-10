@@ -497,156 +497,58 @@ export default function FilterBar({
             >
               <div
                 className="flex h-8 items-center gap-2 rounded-md bg-white px-3">
-
-                <span
-                  className="
-text-[10px]
-font-medium
-text-gray-700
-"
-                >
-
+                <span className="text-[10px] font-medium text-gray-700">
                   {toggleLabel}
-
                 </span>
 
-
                 <button
-
                   type="button"
-
                   onClick={() => setActiveOnly(!activeOnly)}
-
-                  className={`
-relative
-inline-flex
-h-5
-w-10
-items-center
-rounded-full
-${activeOnly
+                  className={`relative inline-flex h-5 w-10 items-center rounded-full
+                    ${activeOnly
                       ?
                       "bg-blue-600"
                       :
                       "bg-gray-300"
-                    }
-`}
-
-                >
-
-
+                    }`}>
                   <span
-
-                    className={`
-inline-block
-h-4
-w-4
-rounded-full
-bg-white
-transition-transform
-${activeOnly
+                    className={`inline-block h-4 w-4 rounded-full bg-white transition-transform
+                      ${activeOnly
                         ?
                         "translate-x-4"
                         :
                         "translate-x-0.5"
-                      }
-`}
-
-                  />
-
-
+                      }`}/> 
                 </button>
-
               </div>
 
 
-
-
-
               {/* ROLE RESET */}
-
               {
                 stackActions && onReset &&
-
-                <button
-
-                  type="button"
-
+                <button type="button"
                   onClick={onReset}
-
-                  className="
-w-25
-flex
-h-8
-items-center
-justify-center
-gap-1
-rounded-md
-border
-border-gray-300
-bg-white
-text-[10px]
-font-medium
-text-gray-700
-hover:bg-gray-50
-"
-
-                >
-
+                  className="w-25 flex h-8 items-center justify-center gap-1 rounded-md border border-gray-300 bg-white
+                  text-[10px] font-medium text-gray-700 hover:bg-gray-50">
                   <RotateCcw className="h-3.5 w-3.5" />
-
                   Reset
-
                 </button>
-
-              }
-
-
-            </div>
-
-          }
-
-
-
-
+               }
+              </div>
+             }
 
           {/* USERS MORE FILTER */}
-
           {
             showMoreFilters &&
-
             <button
-
               type="button"
-
               onClick={onMoreFilters}
-
-              className="
-flex
-h-8
-items-center
-gap-1
-rounded-md
-border
-border-gray-300
-bg-white
-px-3
-text-[10px]
-font-medium
-text-gray-700
-hover:bg-gray-50
-"
-
-            >
-
+              className="flex h-8 items-center gap-1 rounded-md border border-gray-300 bg-white px-3
+              text-[10px] font-medium text-gray-700 hover:bg-gray-50">
               <SlidersHorizontal
-                className="h-3.5 w-3.5"
-              />
-
+                className="h-3.5 w-3.5"/>
               More Filters
-
             </button>
-
           }
 
 
