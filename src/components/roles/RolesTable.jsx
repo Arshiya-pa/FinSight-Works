@@ -31,7 +31,7 @@
 //         flex
 //         flex-col
 //       "
-      
+
 //     >
 //       {/* Header */}
 
@@ -585,20 +585,19 @@ export default function RolesList({
           <tbody>
 
 
-            {roles.map((role)=>(
+            {roles.map((role) => (
 
 
               <tr
                 key={role.id}
-                onClick={()=>setSelectedRole(role)}
+                onClick={() => setSelectedRole(role)}
                 className={`
                   h-6
                   border-b
                   border-gray-100
                   cursor-pointer
                   hover:bg-gray-50
-                  ${
-                    selectedRole?.id === role.id
+                  ${selectedRole?.id === role.id
                     ? "bg-blue-50"
                     : ""
                   }
@@ -685,8 +684,7 @@ export default function RolesList({
                       py-0
                       text-[8px]
                       font-medium
-                      ${
-                        role.type==="System"
+                      ${role.type === "System"
                         ? "bg-blue-100 text-blue-700"
                         : "bg-green-100 text-green-700"
                       }
@@ -723,7 +721,7 @@ export default function RolesList({
 
                     <button
                       type="button"
-                      onClick={(e)=>e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                       className="
                         h-5
                         w-5
@@ -746,7 +744,7 @@ export default function RolesList({
 
                     <button
                       type="button"
-                      onClick={(e)=>e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                       className="
                         h-5
                         w-5
@@ -833,7 +831,7 @@ export default function RolesList({
 
           <button
             onClick={onPrevious}
-            disabled={currentPage===1}
+            disabled={currentPage === 1}
             className="
               h-5
               w-5
@@ -847,7 +845,7 @@ export default function RolesList({
             "
           >
 
-            <ChevronLeft size={10}/>
+            <ChevronLeft size={10} />
 
           </button>
 
@@ -873,7 +871,7 @@ export default function RolesList({
 
           <button
             onClick={onNext}
-            disabled={currentPage===totalPages}
+            disabled={currentPage === totalPages}
             className="
               h-5
               w-5
@@ -887,7 +885,7 @@ export default function RolesList({
             "
           >
 
-            <ChevronRight size={10}/>
+            <ChevronRight size={10} />
 
           </button>
 
@@ -918,8 +916,6 @@ export default function RolesList({
 
 
       </div>
-
-
     </div>
 
   );

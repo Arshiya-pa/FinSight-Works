@@ -28,8 +28,7 @@ export default function LegalGroupDetails({
   if (!group) return null;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white px-4 pt-2 pb-1 shadow-sm">
-
+   <div className="flex h-full min-h-0 flex-col rounded-lg border border-gray-200 bg-white px-4 pt-2 pb-1 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between h-7">
         <h2 className="text-[15px] font-semibold text-gray-900">
@@ -55,19 +54,25 @@ export default function LegalGroupDetails({
 
 
       {/* Profile */}
-      <div className="mt-1.5 flex items-center gap-2">
-        <AvatarBadge initials={group.initials} />
+      <div className="mt-1.5 flex items-center gap-3">
+        <AvatarBadge
+          initials={
+            group.legal_group_name
+              ?.substring(0,2)
+              .toUpperCase()
+          }
+         />
 
         <div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <h3 className="text-[13px] font-semibold text-gray-900">
-              {group.name}
+             {group.legal_group_name}
             </h3>
 
-            <StatusBadge
-              label={group.status}
-              tone="green"
-            />
+             <StatusBadge
+              label={group.active ? "Active" : "Inactive"}
+              tone={group.active ? "green" : "gray"}
+             />
           </div>
 
           <p className="text-[10px] text-gray-500">
@@ -78,32 +83,32 @@ export default function LegalGroupDetails({
 
 
       {/* Information */}
-      <div className="mt-2 grid grid-cols-2 gap-x-5 gap-y-1.5">
+     <div className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2">
 
         <InfoField label="Code">
-          {group.code}
+        {group.legal_group_code}
         </InfoField>
 
         <InfoField label="Created On">
-          {group.createdOn}
+         {group.createdOn || "-"}
         </InfoField>
 
         <InfoField label="Description">
-          {group.description}
-        </InfoField>
-
+        {group.description || "-"}
+       </InfoField>
+       
         <InfoField label="Last Updated By">
-          {group.updatedBy}
+          {group.updatedBy || "-"}
         </InfoField>
 
 
-        <div className="leading-tight py-[1.5px]">
+        <div className="leading-tight py-2">
           <p className="text-[9px] text-gray-500">
             Status
           </p>
 
           <select
-            value={group.status}
+            value={group.active ? "Active" : "Inactive"}
             onChange={(e) =>
               onStatusChange?.(e.target.value)
             }
@@ -116,15 +121,15 @@ export default function LegalGroupDetails({
 
 
         <InfoField label="Last Updated On">
-          {group.updatedOn}
+          {group.updatedOn|| "-"}
         </InfoField>
 
         <InfoField label="No. of Legal Entities">
-          {group.legalEntityCount}
+          {group.legalEntityCount || "-"}
         </InfoField>
 
         <InfoField label="Created By">
-          {group.createdBy}
+          {group.createdBy || "-"}
         </InfoField>
 
       </div>

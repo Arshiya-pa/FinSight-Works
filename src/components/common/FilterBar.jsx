@@ -295,14 +295,7 @@
 //   );
 // }
 
-import {
-  Search,
-  ChevronDown,
-  Plus,
-  RotateCcw,
-  SlidersHorizontal,
-} from "lucide-react";
-
+import { Search, ChevronDown, Plus, RotateCcw, SlidersHorizontal, } from "lucide-react";
 
 /* ----------------------------------------
    Reusable Select
@@ -315,39 +308,20 @@ function Select({
   onChange,
   compact = false,
 }) {
-
+ 
   return (
     <div className={compact ? "w-32" : "min-w-36"}>
 
-      <label className="mb-0.5 block text-[10px] font-medium text-gray-500">
-        {label}
-      </label>
+      <label className="mb-0.5 block text-[10px] font-medium text-gray-500">{label}</label>
 
       <div className="relative">
-
         <select
           value={value ?? ""}
           onChange={onChange || (() => { })}
-          className="
-            h-8
-            w-full
-            rounded-md
-            border
-            border-gray-200
-            bg-white
-            pl-3
-            pr-8
-            text-[12px]
-            text-gray-700
-            appearance-none
-            focus:border-blue-500
-            focus:outline-none
-            focus:ring-2
-            focus:ring-blue-500/30
-          "
-        >
+          className=" h-8 w-full rounded-md border border-gray-200 bg-white pl-3 pr-8
+            text-[12px] text-gray-700  appearance-none focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
 
-         {options.map((option, index) => {
+          {options.map((option, index) => {
             // For API objects (Role dropdown)
             if (typeof option === "object" && option !== null) {
               return (
@@ -359,7 +333,7 @@ function Select({
                 </option>
               );
             }
-          
+
             // For normal string dropdowns
             return (
               <option
@@ -370,36 +344,20 @@ function Select({
               </option>
             );
           })}
-          
+
         </select>
 
 
         <ChevronDown
-          className="
-            pointer-events-none
-            absolute
-            right-2
-            top-1/2
-            h-3.5
-            w-3.5
-            -translate-y-1/2
-            text-gray-400
-          "
-        />
-
+          className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
       </div>
-
     </div>
   );
 }
 
-
-
-
 /* ----------------------------------------
    Filter Bar
 ---------------------------------------- */
-
 
 export default function FilterBar({
   search,
@@ -437,7 +395,7 @@ export default function FilterBar({
       className={`${widthClass} rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm`}>
       <div
         className="flex items-end justify-between gap-2">
-       
+
         {/* LEFT */}
         <div className={`flex gap-2 ${stackActions ? "items-start" : "items-end"}`}>
           {/* SEARCH */}
@@ -450,17 +408,8 @@ export default function FilterBar({
                 value={search ?? ""}
                 onChange={(e) => setSearch?.(e.target.value)}
                 placeholder={placeholder}
-                className="
-                h-8
-                w-full
-                rounded-md
-                border
-                border-gray-200
-                bg-white
-                pl-8
-                pr-3
-                text-[12px]
-                placeholder:text-gray-400
+                className=" h-8 w-full rounded-md border border-gray-200 bg-white
+                pl-8 pr-3 text-[12px] placeholder:text-gray-400
                 focus:border-blue-500
                 focus:outline-none
                 focus:ring-2
@@ -518,7 +467,7 @@ export default function FilterBar({
                         "translate-x-4"
                         :
                         "translate-x-0.5"
-                      }`}/> 
+                      }`} />
                 </button>
               </div>
 
@@ -533,9 +482,9 @@ export default function FilterBar({
                   <RotateCcw className="h-3.5 w-3.5" />
                   Reset
                 </button>
-               }
-              </div>
-             }
+              }
+            </div>
+          }
 
           {/* USERS MORE FILTER */}
           {
@@ -546,117 +495,42 @@ export default function FilterBar({
               className="flex h-8 items-center gap-1 rounded-md border border-gray-300 bg-white px-3
               text-[10px] font-medium text-gray-700 hover:bg-gray-50">
               <SlidersHorizontal
-                className="h-3.5 w-3.5"/>
+                className="h-3.5 w-3.5" />
               More Filters
             </button>
           }
 
-
-
-
-
           {/* NORMAL RESET */}
-
           {
             onReset && !stackActions &&
-
             <button
-
               type="button"
-
               onClick={onReset}
-
-              className="
-flex
-h-8
-items-center
-gap-1
-rounded-md
-border
-border-gray-300
-bg-white
-px-3
-text-[12px]
-font-medium
-text-gray-700
-hover:bg-gray-50
-"
-
-            >
-
+              className="flex h-8 items-center gap-1 rounded-md border border-gray-300b bg-white px-3 text-[12px]
+                font-medium text-gray-700 hover:bg-gray-50">
               <RotateCcw className="h-3.5 w-3.5" />
-
               Reset
-
             </button>
-
           }
-
-
         </div>
-
-
-
-
 
         {/* RIGHT */}
-
         <div
-          className="
-flex
-items-center
-gap-2
-"
-        >
-
+          className="flex items-center gap-2">
           {children}
-
-
           {
             showAddButton &&
-
             <button
-
               type="button"
-
               onClick={onAdd}
-
-              className="
-flex
-h-8
-items-center
-gap-1
-rounded-md
-bg-blue-600
-px-3
-text-[12px]
-font-medium
-text-white
-hover:bg-blue-700
-"
-
-            >
-
+              className="flex h-8 items-center gap-1 rounded-md bg-blue-600 px-3 text-[12px] font-mediumtext-white
+                hover:bg-blue-700">
               <Plus className="h-3.5 w-3.5" />
-
               Add {addButtonLabel}
-
             </button>
-
           }
-
-
         </div>
-
-
-
       </div>
-
-
     </div>
-
-
   );
-
-
 }

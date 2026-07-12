@@ -31,15 +31,15 @@ export default function LegalEntitiesTable({
 
           <thead>
             <tr className="bg-gray-50">
-              <th className="px-2 py-0.5 text-left text-[8px] font-semibold uppercase text-gray-500">
+              <th className="px-2 py-0.5 text-left text-[10px] font-semibold Capitalize text-gray-800">
                 Entity Code
               </th>
 
-              <th className="px-2 py-0.5 text-left text-[8px] font-semibold uppercase text-gray-500">
+              <th className="px-2 py-0.5 text-left text-[10px] font-semibold Capitalize text-gray-800">
                 Legal Entity Name
               </th>
 
-              <th className="px-2 py-0.5 text-left text-[8px] font-semibold uppercase text-gray-500">
+              <th className="px-2 py-0.5 text-left text-[10px] font-semibold Capitalize text-gray-800">
                 Status
               </th>
             </tr>

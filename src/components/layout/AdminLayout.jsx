@@ -37,7 +37,7 @@
 //   );
 // }
 
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import SidebarAdmin from "./SidebarAdmin";
 import NavbarAdmin from "./NavbarAdmin";
 
@@ -50,6 +50,16 @@ export default function AdminLayout({
   userRole = "Super Administrator",
   notificationCount = 0,
 }) {
+
+  const location = useLocation();
+  const breadcrumbMap = {
+    "/admin/dashboard": ["Admin", "Dashboard"],
+    "/admin/users": ["Admin", "Security", "Users"],
+    "/admin/roles": ["Admin", "Security", "Roles"],
+    "/admin/master-data": ["Admin", "Master Data"],
+  };
+  const currentBreadcrumbs =
+    breadcrumbMap[location.pathname] || ["Admin"];
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
@@ -58,14 +68,13 @@ export default function AdminLayout({
       {/* Right Content */}
       <div className="flex flex-1 min-w-0 flex-col overflow-hidden">
         <NavbarAdmin
-          breadcrumbs={breadcrumbs}
+          breadcrumbs={currentBreadcrumbs}
           company={company}
           initials={initials}
           userName={userName}
           userRole={userRole}
           notificationCount={notificationCount}
         />
-
         {/* Page */}
         <main className="flex-1 overflow-hidden p-5">
           <div className="flex h-full flex-col">

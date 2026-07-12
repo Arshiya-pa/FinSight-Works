@@ -4,38 +4,46 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import toast from "react-hot-toast";
 import { useState, useEffect, useRef } from "react";
 import ConfirmationModel from "../common/ConfirmationModel";
 
-
-export default function LegalGroupsTable({
-  legalGroups = [],
+export default function LegalEntitiesMasterTable({
+  legalEntities = [],
   onEdit,
-  onSelect, selectedGroup, onStatusToggle,
+  onSelect,
+  selectedEntity,
+  onStatusToggle,
 }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(8);
 
-  const [showStatusConfirm, setShowStatusConfirm] = useState(false);
-  const [selectedStatusGroup, setSelectedStatusGroup] = useState(null);
+  const [showStatusConfirm, setShowStatusConfirm] =
+    useState(false);
+
+  const [selectedStatusEntity, setSelectedStatusEntity] =
+    useState(null);
+
   const [menuPosition, setMenuPosition] = useState({
     top: 0,
     left: 0,
   });
 
-  const totalRows = legalGroups.length;
+  const [openMenu, setOpenMenu] = useState(null);
+
+  const menuRef = useRef(null);
+
+  const totalRows = legalEntities.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
-  const currentRows = legalGroups.slice(startIndex, endIndex);
+  const currentRows = legalEntities.slice(
+    startIndex,
+    endIndex
+  );
 
-  const [openMenu, setOpenMenu] = useState(null);
-  const menuRef = useRef(null);
-
-  {/*......Close menu when clicking outside........*/ }
+  /* Close menu when clicking outside */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -45,7 +53,12 @@ export default function LegalGroupsTable({
         setOpenMenu(null);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
     return () =>
       document.removeEventListener(
         "mousedown",
@@ -61,94 +74,109 @@ export default function LegalGroupsTable({
         <table className="w-full border-collapse">
 
           {/* Header */}
-          <thead className=" border-b border-gray-200 bg-gray-50">
+          <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
-              {[
-                "Legal Group Code",
-                "Legal Group Name",
-                //"Description",
-                "Status",
-                //"No. of Legal Entities",
-                "Action",
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-2 py-1.5  text-[9px] font-bold text-center capitalize tracking-wide text-gray-600"
-                >
-                  {header}
-                </th>
-              ))}
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Legal Entity Code
+              </th>
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Legal Entity Name
+              </th>
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Status
+              </th>
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Action
+              </th>
+
             </tr>
           </thead>
-
 
           {/* Body */}
           <tbody>
             {currentRows.length > 0 ? (
-              currentRows.map((group) => (
+              currentRows.map((entity) => (
                 <tr
-                  key={group.legal_group_id}
-                  onClick={() => onSelect(group)}
-                  className={`cursor-pointer border-b ${selectedGroup?.legal_group_id === group.legal_group_id
-                    ? "bg-blue-50"
-                    : "hover:bg-gray-50"}`}>
+                  key={entity.legal_entity_id}
+                  onClick={() => onSelect(entity)}
+                  className={`cursor-pointer border-b ${
+                    selectedEntity?.legal_entity_id ===
+                    entity.legal_entity_id
+                      ? "bg-blue-50"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
 
-                  <td className="px-2.5 py-1.5 text-[10px] text-center font-medium leading-tight text-gray-800">
-                    {group.legal_group_code}
+                  {/* Code */}
+                  <td className="px-2.5 py-1.5 text-center text-[10px] font-medium leading-tight text-gray-800">
+                    {entity.legal_entity_code}
                   </td>
 
-                  <td className="px-2.5 py-1.5 text-[10px] font-medium text-center leading-tight text-gray-800">
-                    {group.legal_group_name}
+                  {/* Name */}
+                  <td className="px-2.5 py-1.5 text-center text-[10px] font-medium leading-tight text-gray-800">
+                    {entity.legal_entity_name}
                   </td>
 
-                  {/* <td className="px-2.5 py-1.5 text-[10px] font-medium text-center leading-tight text-gray-800">
-                  {group.description}
-                </td> */}
-
+                  {/* Status */}
                   <td className="px-2.5 py-1.5 text-center">
                     <span
-                      className={`inline-flex rounded-full px-1.5 py-0.5 text-[9px] 
-                    font-medium leading-tight ${group.active
+                      className={`inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-medium leading-tight ${
+                        entity.active
                           ? "bg-green-100 text-green-700"
                           : "bg-gray-100 text-gray-600"
-                        }`}
+                      }`}
                     >
-                      {group.active ? "Active" : "Inactive"}
+                      {entity.active
+                        ? "Active"
+                        : "Inactive"}
                     </span>
                   </td>
 
-                  {/* <td className="px-2.5 py-1.5 text-center text-[10px] font-medium text-gray-800">
-                  {group.legalEntities}
-                </td> */}
-
+                  {/* Actions */}
                   <td className="px-2.5 py-1.5">
+
                     <div className="flex justify-center gap-1">
 
-                      <button onClick={(e) => {
-                        console.log(group)
-                        e.stopPropagation(); // Prevent row click
-                        onEdit?.(group);
-                      }}
+                      {/* Edit */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit?.(entity);
+                        }}
                         className="flex h-6 w-6 items-center justify-center rounded hover:bg-gray-100"
                       >
-                        <Pencil size={11} className="text-gray-900" />
+                        <Pencil
+                          size={11}
+                          className="text-gray-900"
+                        />
                       </button>
 
-                      <div className="relative" ref={menuRef}>
+                      {/* More */}
+                      <div
+                        className="relative"
+                        ref={menuRef}
+                      >
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
 
-                            const rect = e.currentTarget.getBoundingClientRect();
+                            const rect =
+                              e.currentTarget.getBoundingClientRect();
+
                             setMenuPosition({
                               top: rect.bottom + 5,
                               left: rect.right - 145,
                             });
 
                             setOpenMenu(
-                              openMenu === group.legal_group_id
+                              openMenu ===
+                                entity.legal_entity_id
                                 ? null
-                                : group.legal_group_id
+                                : entity.legal_entity_id
                             );
                           }}
                           className="flex h-6 w-6 items-center justify-center rounded hover:bg-gray-100"
@@ -158,7 +186,9 @@ export default function LegalGroupsTable({
                             className="text-gray-900"
                           />
                         </button>
-                        {openMenu && (
+
+                        {openMenu ===
+                          entity.legal_entity_id && (
                           <div
                             className="fixed z-9999 w-36 rounded-md border border-gray-200 bg-white shadow-lg"
                             style={{
@@ -166,14 +196,10 @@ export default function LegalGroupsTable({
                               left: menuPosition.left,
                             }}
                           >
+
                             <button
                               onClick={() => {
-                                const group = legalGroups.find(
-                                  (g) => g.legal_group_id === openMenu
-                                );
-                                if (group) {
-                                  onSelect?.(group);
-                                }
+                                onSelect(entity);
                                 setOpenMenu(null);
                               }}
                               className="block w-full px-3 py-2 text-left text-xs hover:bg-gray-50"
@@ -183,70 +209,54 @@ export default function LegalGroupsTable({
 
                             <button
                               onClick={() => {
-                                const group = legalGroups.find(
-                                  (g) => g.legal_group_id === openMenu
+                                setSelectedStatusEntity(
+                                  entity
                                 );
-
-                                if (!group) return;
-
-                                setSelectedStatusGroup(group);
-                                setShowStatusConfirm(true);
+                                setShowStatusConfirm(
+                                  true
+                                );
                                 setOpenMenu(null);
                               }}
                               className="block w-full px-3 py-2 text-left text-xs hover:bg-gray-50"
                             >
-                              {legalGroups.find(
-                                (g) => g.legal_group_id === openMenu
-                              )?.active
+                              {entity.active
                                 ? "Deactivate"
                                 : "Activate"}
                             </button>
+
                           </div>
                         )}
+
                       </div>
+
                     </div>
+
                   </td>
+
                 </tr>
               ))
             ) : (
               <tr>
                 <td
                   colSpan={4}
-                  className="py-6 text-center text-sm text-gray-500">
-                  No legal groups found.
+                  className="py-6 text-center text-sm text-gray-500"
+                >
+                  No Legal Entities found.
                 </td>
               </tr>
             )}
           </tbody>
+
         </table>
       </div>
-
-
-      {/* Pagination */}
+            {/* Pagination */}
       <div className="flex items-center justify-between border-t border-gray-200 px-2 py-1.5">
 
-        {/* <div className="flex items-center gap-1 text-[10px] text-gray-600">
-          <span>Rows</span>
-
-          <select
-            value={rowsPerPage}
-            onChange={(e) => {
-              setRowsPerPage(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-            className="h-6 rounded border border-gray-300 px-1 text-[10px]"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-          </select>
-        </div> */}
-
-
         <div className="text-[10px] text-gray-700">
-          {startIndex + 1}-{Math.min(endIndex, totalRows)} of {totalRows}
+          {totalRows === 0
+            ? "0-0 of 0"
+            : `${startIndex + 1}-${Math.min(endIndex, totalRows)} of ${totalRows}`}
         </div>
-
 
         <div className="flex items-center gap-1">
 
@@ -259,11 +269,13 @@ export default function LegalGroupsTable({
           </button>
 
           <span className="text-[10px] font-medium">
-            {currentPage}/{totalPages}
+            {totalPages === 0 ? 0 : currentPage}/{totalPages || 1}
           </span>
 
           <button
-            disabled={currentPage === totalPages}
+            disabled={
+              currentPage === totalPages || totalPages === 0
+            }
             onClick={() => setCurrentPage((p) => p + 1)}
             className="flex h-6 w-6 items-center justify-center rounded border hover:bg-gray-50 disabled:opacity-40"
           >
@@ -274,37 +286,37 @@ export default function LegalGroupsTable({
 
       </div>
 
+      {/* Activate / Deactivate Confirmation */}
       <ConfirmationModel
         open={showStatusConfirm}
         title={
-          selectedStatusGroup?.active
-            ? "Deactivate Legal Group"
-            : "Activate Legal Group"
+          selectedStatusEntity?.active
+            ? "Deactivate Legal Entity"
+            : "Activate Legal Entity"
         }
         message={
-          selectedStatusGroup?.active
-            ? `Are you sure you want to deactivate ${selectedStatusGroup?.legal_group_name}?`
-            : `Are you sure you want to activate ${selectedStatusGroup?.legal_group_name}?`
+          selectedStatusEntity?.active
+            ? `Are you sure you want to deactivate ${selectedStatusEntity?.legal_entity_name}?`
+            : `Are you sure you want to activate ${selectedStatusEntity?.legal_entity_name}?`
         }
         confirmText={
-          selectedStatusGroup?.active
+          selectedStatusEntity?.active
             ? "Deactivate"
             : "Activate"
         }
         cancelText="Cancel"
-
         onCancel={() => {
           setShowStatusConfirm(false);
-          setSelectedStatusGroup(null);
+          setSelectedStatusEntity(null);
         }}
-
         onConfirm={() => {
-          onStatusToggle(selectedStatusGroup);
+          onStatusToggle?.(selectedStatusEntity);
 
           setShowStatusConfirm(false);
-          setSelectedStatusGroup(null);
+          setSelectedStatusEntity(null);
         }}
       />
+
     </div>
   );
 }
