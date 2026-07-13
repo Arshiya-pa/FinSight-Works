@@ -8,7 +8,7 @@ import {
 
 import PermissionTable from "./PermissionTable";
 
-export default function RoleDetailsPanel() {
+export default function RoleDetailsPanel({ role }) {
   const [activeTab, setActiveTab] = useState("permissions");
 
   const tabs = [
@@ -29,7 +29,15 @@ export default function RoleDetailsPanel() {
       label: "Audit Log",
     },
   ];
-
+  if (!role) {
+    return (
+      <div className="h-full flex items-center justify-center rounded-xl border border-gray-200 bg-white shadow-sm">
+        <p className="text-sm text-gray-500">
+          Select a role to view details
+        </p>
+      </div>
+    );
+  }
   return (
     <div
       // className="
@@ -96,7 +104,8 @@ export default function RoleDetailsPanel() {
             </label>
 
             <input
-              defaultValue="Finance Admin"
+              value={role.name || ""}
+              readOnly
               className="
                 h-6
                 w-full
@@ -134,7 +143,8 @@ export default function RoleDetailsPanel() {
 
             <textarea
               rows={2}
-              defaultValue="Finance Administrator"
+              value={role.description || ""}
+              readOnly
               className="
                 h-10
                 w-full
@@ -210,25 +220,11 @@ export default function RoleDetailsPanel() {
                 Status
               </label>
 
-              <select
-                className="
-                  h-6
-                  w-full
-                  rounded
-                  border
-                  border-gray-300
-                  px-2
-                  text-[10px]
-                  outline-none
-                  focus:border-blue-500
-                  focus:ring-1
-                  focus:ring-blue-100
-                "
-              >
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
-
+              <input
+                value={role.active ? "Active" : "Inactive"}
+                readOnly
+                className="h-6 w-full rounded border border-gray-300 px-2 text-[10px]"
+              />
             </div>
 
           </div>
@@ -236,7 +232,7 @@ export default function RoleDetailsPanel() {
         </div>
 
       </div>
-       {/* Tabs */}
+      {/* Tabs */}
 
       <div className="border-b border-gray-200">
 
@@ -253,10 +249,9 @@ export default function RoleDetailsPanel() {
                 text-[10px]
                 font-medium
                 transition-colors
-                ${
-                  activeTab === tab.id
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "text-gray-500 hover:text-gray-800"
+                ${activeTab === tab.id
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-500 hover:text-gray-800"
                 }
               `}
             >
@@ -328,9 +323,9 @@ export default function RoleDetailsPanel() {
           {/* Permission Table */}
           <PermissionTable compact />
 
-      {/* Footer */}
-      <div
-        className="
+          {/* Footer */}
+          <div
+            className="
           flex
           items-center
           justify-between
@@ -340,18 +335,18 @@ export default function RoleDetailsPanel() {
           px-2
           py-0.5
         "
-      >
-        {/* Left */}
-        <p className="text-[8px] leading-none text-gray-500">
-          <span className="text-blue-600">Note:</span> Admin permission includes all other permissions.
-        </p>
+          >
+            {/* Left */}
+            <p className="text-[8px] leading-none text-gray-500">
+              <span className="text-blue-600">Note:</span> Admin permission includes all other permissions.
+            </p>
 
-        {/* Right */}
-        <div className="flex items-center gap-1">
+            {/* Right */}
+            <div className="flex items-center gap-1">
 
-          <button
-            type="button"
-            className="
+              <button
+                type="button"
+                className="
               h-6
               px-2.5
               rounded
@@ -364,13 +359,13 @@ export default function RoleDetailsPanel() {
               hover:bg-gray-50
               transition-colors
             "
-          >
-            Cancel
-          </button>
+              >
+                Cancel
+              </button>
 
-          <button
-            type="button"
-            className="
+              <button
+                type="button"
+                className="
               h-6
               px-2.5
               rounded
@@ -381,12 +376,12 @@ export default function RoleDetailsPanel() {
               hover:bg-blue-700
               transition-colors
             "
-          >
-            Save Changes
-          </button>
+              >
+                Save Changes
+              </button>
 
-        </div>
-      </div>
+            </div>
+          </div>
 
         </div>
 
@@ -403,7 +398,7 @@ export default function RoleDetailsPanel() {
         </div>
 
       )}
-     
+
     </div>
   );
 }

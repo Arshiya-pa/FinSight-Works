@@ -1,247 +1,7 @@
-// import React, { useState } from "react";
-// import { UserPlus } from "lucide-react";
 
-// import AdminLayout from "../components/layout/AdminLayout";
-// import PageHeader from "../components/common/PageHeader";
-// import StatCard from "../components/StatCard";
-// import FilterBar from "../components/common/FilterBar";
-// import RolesTable from "../components/roles/RolesTable";
-// import RoleDetailsPanel from "../components/roles/RoleDetailsPanel";
-// import FooterNote from "../components/FooterNote";
-
-// import { roleStats, roles } from "../data/rolesData";
-// import { statuses } from "../data/dummyData";
-
-
-// export default function RolesDashboard() {
-
-//   const [search, setSearch] = useState("");
-//   const [activeOnly, setActiveOnly] = useState(true);
-//   const [status, setStatus] = useState("All");
-//   const [selectedRole, setSelectedRole] = useState(roles[0]);
-
-
-//   const resetFilters = () => {
-//     setSearch("");
-//     setStatus("All");
-//     setActiveOnly(true);
-//   };
-
-
-//   return (
-
-//     <AdminLayout
-//       activeMenu="Roles"
-//       breadcrumbs={[
-//         "Admin",
-//         "Security",
-//         "Roles"
-//       ]}
-//       company="FJ Group"
-//       initials="SA"
-//       userName="Super Admin"
-//       userRole="Super Administrator"
-//       notificationCount={3}
-//     >
-
-
-//       {/* Header */}
-
-//       <PageHeader
-//         title="Roles"
-//         subtitle="Create and manage user roles, define permissions and access levels across FinSight."
-//         buttonText="Add Role"
-//         buttonIcon={UserPlus}
-//       />
-
-
-
-//       {/* KPI CARDS */}
-
-//       <div
-//         className="
-//           grid
-//           grid-cols-1
-//           sm:grid-cols-2
-//           xl:grid-cols-5
-//           gap-0.75
-//         "
-//       >
-
-//         {roleStats.map((item,index)=>(
-
-//           <StatCard
-//             key={item.title}
-//             {...item}
-//             delay={index * 0.08}
-//           />
-
-//         ))}
-
-//       </div>
-
-
-
-
-
-//       {/* MAIN CONTENT */}
-
-//       <div
-//         className="
-//           grid
-//           grid-cols-1
-//           xl:grid-cols-12
-//           gap-x-0.75
-//           gap-y-0.75
-//           mt-0.75
-//         "
-//       >
-
-
-
-//         {/* LEFT : 40% */}
-
-//         <div
-//           className="
-//             xl:col-span-5
-//             flex
-//             flex-col
-//             gap-0.75
-//             min-h-0
-//           "
-//         >
-
-
-//           {/* FILTER BAR */}
-
-//           <FilterBar
-
-//             width="full"
-
-//             stackActions
-
-//             search={search}
-
-//             setSearch={setSearch}
-
-//             placeholder="Search role name or description..."
-
-//             filters={[
-//               {
-//                 label:"Status",
-//                 options:statuses,
-//                 value:status,
-//                 onChange:(e)=>setStatus(e.target.value),
-//               },
-//             ]}
-
-//             activeOnly={activeOnly}
-
-//             setActiveOnly={setActiveOnly}
-
-//             toggleLabel="Active Roles Only"
-
-//             onReset={resetFilters}
-
-//           />
-
-
-
-
-
-//           {/* ROLES TABLE */}
-
-//           <div
-//             className="
-//               h-[calc(100vh-320px)]
-//               min-h-112.5
-//               rounded-xl
-//               border
-//               border-gray-200
-//               bg-white
-//               shadow-sm
-//               overflow-hidden
-//               p-2
-//             "
-//           >
-
-//             <RolesTable
-
-//               roles={roles}
-
-//               search={search}
-
-//               activeOnly={activeOnly}
-
-//               selectedRole={selectedRole}
-
-//               setSelectedRole={setSelectedRole}
-
-//             />
-
-
-//           </div>
-
-
-//         </div>
-
-
-
-
-
-//         {/* RIGHT : 60% */}
-
-//         <div
-//           className="
-//             xl:col-span-7
-//           "
-//         >
-
-//           <RoleDetailsPanel
-
-//             role={selectedRole}
-
-//           />
-
-
-//         </div>
-
-
-
-//       </div>
-
-
-
-
-
-//       {/* FOOTER */}
-
-//       <div
-//         className="
-//           mt-0.75
-//         "
-//       >
-
-//         <FooterNote
-
-//           title="Note:"
-
-//           message="Changes to role permission will affect all users assigned to this role."
-
-//         />
-
-//       </div>
-
-
-
-//     </AdminLayout>
-
-//   );
-
-// }
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserPlus } from "lucide-react";
+import toast from "react-hot-toast";
 
 import PageHeader from "../components/common/PageHeader";
 import StatCard from "../components/StatCard";
@@ -249,9 +9,13 @@ import FilterBar from "../components/common/FilterBar";
 import RolesTable from "../components/roles/RolesTable";
 import RoleDetailsPanel from "../components/roles/RoleDetailsPanel";
 import FooterNote from "../components/FooterNote";
+import AddRoleModal from "../components/roles/AddRoleModal";
+import ConfirmationModel from "../components/common/ConfirmationModel";
 
 import { roleStats, roles } from "../data/rolesData";
 import { statuses } from "../data/dummyData";
+
+import { addRole, getRole, updateRole } from "../api/rolesApi"
 
 
 export default function RolesDashboard() {
@@ -259,126 +23,221 @@ export default function RolesDashboard() {
   const [search, setSearch] = useState("");
   const [activeOnly, setActiveOnly] = useState(true);
   const [status, setStatus] = useState("All");
-  const [selectedRole, setSelectedRole] = useState(roles[0]);
+  const [roles, setRoles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
 
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [editRole, setEditRole] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const [showEditConfirm, setShowEditConfirm] = useState(false);
+  const [selectedEditRole, setSelectedEditRole] = useState(null);
+
+  /*---load roles from database---*/
+  const fetchRoles = async () => {
+    try {
+      const response = await getRole();
+      const data = response.data.data || response.data;
+      console.log("data is ", data)
+      const formattedRoles = data.map((role) => ({
+        id: role.role_code,
+        role_code: role.role_code,
+        role_name: role.role_name, // <-- add this
+        name: role.role_name,      // optional for table
+        active: role.active,
+        description: "",
+        users: 0,
+        type: role.active ? "Active" : "Inactive",
+      }));
+
+      setRoles(formattedRoles);
+      if (formattedRoles.length > 0) {
+        setSelectedRole(formattedRoles[0]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const filteredRoles = roles.filter((role) => {
+    const matchesSearch =
+      (role.name || "")
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesStatus =
+      status === "All" ||
+      (role.active ? "Active" : "Inactive") === status;
+
+    const matchesActive =
+      !activeOnly || role.active;
+
+    return matchesSearch && matchesStatus && matchesActive;
+  });
+
+  const dashboardStats = [
+    {
+      title: "Total Roles",
+      value: roles.length,
+      change: `${roles.length} Roles`,
+      description: "All roles in system",
+    },
+    {
+      title: "Active Roles",
+      value: roles.filter((r) => r.active).length,
+      change: "Currently Active",
+      description: "Active Roles",
+    },
+    {
+      title: "System Roles",
+      value: 0,
+      change: "Currently Inactive",
+      description: "Predefined System Roles",
+    },
+    {
+      title: "Custom Roles",
+      value: 0,
+      change: "Search Result",
+      description: "Organisation Specific",
+    },
+    {
+      title: "Users Assigned",
+      value: 0,
+      change: "Search Result",
+      description: "Access All Roles",
+    },
+
+  ];
   const resetFilters = () => {
     setSearch("");
     setStatus("All");
     setActiveOnly(true);
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage((p) => p - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((p) => p + 1);
+    }
+  };
+
+  const handleFirst = () => {
+    setCurrentPage(1);
+  };
+
+  const handleLast = () => {
+    setCurrentPage(totalPages);
+  };
+
+  const pageSize = 7;
+  const total = filteredRoles.length;
+  const totalPages = Math.ceil(total / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentRoles = filteredRoles.slice(
+    startIndex,
+    startIndex + pageSize
+  );
+  const startItem =
+    total === 0 ? 0 : startIndex + 1;
+  const endItem = Math.min(
+    currentPage * pageSize,
+    total
+  );
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const handleToggleStatus = async (role) => {
+  try {
+    const payload = {
+      role_code: role.role_code,
+      role_name: role.role_name || role.name,
+      active: !role.active,
+    };
+
+    await updateRole(role.role_code, payload);
+
+    toast.success(
+      role.active
+        ? "Role deactivated successfully"
+        : "Role activated successfully"
+    );
+
+    fetchRoles();
+  } catch (error) {
+    console.error(error);
+
+    if (error.response) {
+      toast.error(
+        error.response.data.detail || "Failed to update role status"
+      );
+    } else {
+      toast.error("Unable to connect to server");
+    }
+  }
+};
   return (
-
     <>
-
       {/* Header */}
-
       <PageHeader
         title="Roles"
         subtitle="Create and manage user roles, define permissions and access levels across FinSight."
         buttonText="Add Role"
         buttonIcon={UserPlus}
+        onButtonClick={() => {
+          setEditRole(null);
+          setShowRoleModal(true);
+        }}
       />
-
-
-
       {/* KPI CARDS */}
-
-      <div
-        className="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          xl:grid-cols-5
-          gap-0.75
-        "
-      >
-
-        {roleStats.map((item,index)=>(
-
+      <div className=" grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-0.75">
+        {dashboardStats.map((item, index) => (
           <StatCard
             key={item.title}
             {...item}
             delay={index * 0.08}
           />
-
         ))}
-
       </div>
 
-
-
-
-
       {/* MAIN CONTENT */}
-
-      <div
-        className="
-          grid
-          grid-cols-1
-          xl:grid-cols-12
-          gap-x-0.75
-          gap-y-0.75
-          mt-0.75
-        "
-      >
-
-
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-0.75 gap-y-0.75 mt-0.75 ">
 
         {/* LEFT : 40% */}
-
-        <div
-          className="
-            xl:col-span-5
-            flex
-            flex-col
-            gap-0.75
-            min-h-0
-          "
-        >
-
-
+        <div className="xl:col-span-5 flex flex-col gap-0.75 min-h-0">
           {/* FILTER BAR */}
-
           <FilterBar
-
             width="full"
-
             stackActions
-
             search={search}
-
             setSearch={setSearch}
-
             placeholder="Search role name or description..."
-
             filters={[
               {
-                label:"Status",
-                options:statuses,
-                value:status,
-                onChange:(e)=>setStatus(e.target.value),
+                label: "Status",
+                options: statuses,
+                value: status,
+                onChange: (e) => setStatus(e.target.value),
               },
             ]}
-
             activeOnly={activeOnly}
-
             setActiveOnly={setActiveOnly}
-
             toggleLabel="Active Roles Only"
-
             onReset={resetFilters}
-
           />
 
-
-
-
-
           {/* ROLES TABLE */}
-
           <div
             className="
               h-[calc(100vh-320px)]
@@ -392,77 +251,80 @@ export default function RolesDashboard() {
               p-2
             "
           >
-
             <RolesTable
-
-              roles={roles}
-
-              search={search}
-
-              activeOnly={activeOnly}
-
+              roles={currentRoles}
+              total={total}
               selectedRole={selectedRole}
-
               setSelectedRole={setSelectedRole}
 
+             onEdit={(role) => {
+               setSelectedEditRole(role);
+               setShowEditConfirm(true);
+             }}
+
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              startItem={startItem}
+              endItem={endItem}
+
+              onPageChange={handlePageChange}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onFirst={handleFirst}
+              onLast={handleLast}
+               onToggleStatus={handleToggleStatus}
             />
-
-
           </div>
-
-
         </div>
-
-
-
-
 
         {/* RIGHT : 60% */}
-
         <div
           className="
-            xl:col-span-7
-          "
+            xl:col-span-7"
         >
-
           <RoleDetailsPanel
-
             role={selectedRole}
-
           />
-
-
         </div>
-
-
-
       </div>
 
+       {/* FOOTER */}
+          <div className="fixed bottom-0 left-55 right-0 border-t border-gray-200 bg-white px-0.5 py-0 shadow-sm">
+            <FooterNote
+              title="Note:"
+              message="Changes to role permission will affect all users assigned to this role."
+            />
+           </div>
+    
+      <AddRoleModal
+        open={showRoleModal}
+        onClose={() => {
+          setShowRoleModal(false);
+          setEditRole(null);
+        }}
+        editRole={editRole}
+        onSuccess={() => {
+          fetchRoles();
+        }}
+      />
 
-
-
-
-      {/* FOOTER */}
-
-      <div
-        className="
-          mt-0.75
-        "
-      >
-
-        <FooterNote
-
-          title="Note:"
-
-          message="Changes to role permission will affect all users assigned to this role."
-
-        />
-
-      </div>
-
-
+    <ConfirmationModel
+       open={showEditConfirm}
+       title="Edit Role"
+       message="Do you want to edit this role?"
+       confirmText="Edit"
+       cancelText="Cancel"
+       onCancel={() => {
+         setShowEditConfirm(false);
+         setSelectedEditRole(null);
+       }}
+       onConfirm={() => {
+         setShowEditConfirm(false);
+         setEditRole(selectedEditRole);
+         setShowRoleModal(true);
+       }}
+    />
     </>
-
   );
-
 }

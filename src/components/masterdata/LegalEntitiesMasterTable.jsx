@@ -1,6 +1,9 @@
 import {
   Pencil,
   MoreVertical,
+  ArrowUpDown,
+  ChevronsLeft,
+  ChevronsRight,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -42,6 +45,23 @@ export default function LegalEntitiesMasterTable({
     startIndex,
     endIndex
   );
+  const goFirst = () => {
+    setCurrentPage(1);
+  };
+  const goLast = () => {
+    setCurrentPage(totalPages);
+  };
+  const goPrevious = () => {
+    setCurrentPage((prev) =>
+      Math.max(prev - 1, 1)
+    );
+  };
+
+  const goNext = () => {
+    setCurrentPage((prev) =>
+      Math.min(prev + 1, totalPages)
+    );
+  };
 
   /* Close menu when clicking outside */
   useEffect(() => {
@@ -145,6 +165,7 @@ export default function LegalEntitiesMasterTable({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          console.log("Edit clicked:", entity);
                           onEdit?.(entity);
                         }}
                         className="flex h-6 w-6 items-center justify-center rounded hover:bg-gray-100"
@@ -249,41 +270,123 @@ export default function LegalEntitiesMasterTable({
 
         </table>
       </div>
-            {/* Pagination */}
-      <div className="flex items-center justify-between border-t border-gray-200 px-2 py-1.5">
+      
+      {/* Pagination */}
+      <div
+        className=" flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 bg-gray-50/40 px-4 py-2"
+      >
 
-        <div className="text-[10px] text-gray-700">
-          {totalRows === 0
-            ? "0-0 of 0"
-            : `${startIndex + 1}-${Math.min(endIndex, totalRows)} of ${totalRows}`}
-        </div>
+        {/* Record Info */}
+        <p className=" text-[9px] text-gray-700" >
+           Showing{" "}
+          {
+            totalRows === 0
+              ?
+              0
+              :
+              startIndex + 1
+          }
+          {" "}to{" "}
+          {
+            Math.min(
+              endIndex,
+              totalRows
+            )
+          }
+          {" "}of{" "}
 
-        <div className="flex items-center gap-1">
+          {totalRows}
 
+          {" "}Legal Groups
+
+        </p>
+        {/* Pagination Buttons */}
+        <div
+          className=" flex items-center gap-1"
+        >
+
+          {/* First */}
           <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="flex h-6 w-6 items-center justify-center rounded border hover:bg-gray-50 disabled:opacity-40"
-          >
-            <ChevronLeft size={11} />
-          </button>
-
-          <span className="text-[10px] font-medium">
-            {totalPages === 0 ? 0 : currentPage}/{totalPages || 1}
-          </span>
-
-          <button
+            onClick={goFirst}
             disabled={
-              currentPage === totalPages || totalPages === 0
+              currentPage === 1
             }
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="flex h-6 w-6 items-center justify-center rounded border hover:bg-gray-50 disabled:opacity-40"
-          >
-            <ChevronRight size={11} />
+            className=" rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40" >
+            <ChevronsLeft
+              className="h-3.5 w-3.5"
+            />
           </button>
 
-        </div>
+          {/* Previous */}
+          <button
+            onClick={goPrevious}
+            disabled={
+              currentPage === 1
+            }
+            className=" rounded p-1 text-gray-500 hover:bg-gray-800 disabled:opacity-40">
+            <ChevronLeft
+              className="h-3.5 w-3.5"
+            />
+          </button>
 
+          {/* Page Numbers */}
+          {
+            Array.from(
+              {
+                length: totalPages
+              },
+              (_, index) => {
+
+                const page = index + 1;
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                   className={`h-6 w-6 rounded text-[9px] font-medium
+                     *:${currentPage === page
+                        ?
+                        "bg-blue-600 text-white"
+                        :
+                        "text-gray-600 hover:bg-gray-100"
+                      }
+                   `}  >
+                    {page}
+                  </button>
+                )
+              }
+            )
+          }
+
+          {/* Next */}
+          <button
+            onClick={goNext}
+            disabled={
+              currentPage === totalPages ||
+              totalPages === 0
+            }
+            className=" rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+          >
+            <ChevronRight
+              className="h-3.5 w-3.5"
+            />
+          </button>
+
+          {/* Last */}
+
+          <button
+            onClick={goLast}
+            disabled={
+              currentPage === totalPages ||
+              totalPages === 0
+            }
+            className=" rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40"
+          >
+            <ChevronsRight
+              className="h-3.5 w-3.5"
+            />
+
+          </button>
+        </div>
       </div>
 
       {/* Activate / Deactivate Confirmation */}

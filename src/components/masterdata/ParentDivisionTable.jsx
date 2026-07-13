@@ -7,55 +7,67 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import toast from "react-hot-toast";
 import { useState, useEffect, useRef } from "react";
 import ConfirmationModel from "../common/ConfirmationModel";
 
-
-export default function LegalGroupsTable({
-  legalGroups = [],
+export default function ParentDivisionTable({
+  parentDivisions = [],
   onEdit,
-  onSelect, selectedGroup, onStatusToggle,
+  onSelect,
+  selectedParentDivision,
+  onStatusToggle,
 }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(8);
 
-  const [showStatusConfirm, setShowStatusConfirm] = useState(false);
-  const [selectedStatusGroup, setSelectedStatusGroup] = useState(null);
+  const [showStatusConfirm, setShowStatusConfirm] =
+    useState(false);
+
+  const [selectedStatusDivision, setSelectedStatusDivision] =
+    useState(null);
+
   const [menuPosition, setMenuPosition] = useState({
     top: 0,
     left: 0,
   });
 
-  const totalRows = legalGroups.length;
+  const [openMenu, setOpenMenu] = useState(null);
+
+  const menuRef = useRef(null);
+
+  const totalRows = parentDivisions.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
-  const currentRows = legalGroups.slice(startIndex, endIndex);
+  const currentRows = parentDivisions.slice(
+    startIndex,
+    endIndex
+  );
   const goFirst = () => {
-    setCurrentPage(1);
-  };
-  const goLast = () => {
-    setCurrentPage(totalPages);
-  };
-  const goPrevious = () => {
-    setCurrentPage((prev) =>
-      Math.max(prev - 1, 1)
-    );
-  };
+  setCurrentPage(1);
+};
 
-  const goNext = () => {
-    setCurrentPage((prev) =>
-      Math.min(prev + 1, totalPages)
-    );
-  };
 
-  const [openMenu, setOpenMenu] = useState(null);
-  const menuRef = useRef(null);
+const goLast = () => {
+  setCurrentPage(totalPages);
+};
 
-  {/*......Close menu when clicking outside........*/ }
+
+const goPrevious = () => {
+  setCurrentPage((prev) =>
+    Math.max(prev - 1, 1)
+  );
+};
+
+
+const goNext = () => {
+  setCurrentPage((prev) =>
+    Math.min(prev + 1, totalPages)
+  );
+};
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -65,7 +77,12 @@ export default function LegalGroupsTable({
         setOpenMenu(null);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
     return () =>
       document.removeEventListener(
         "mousedown",
@@ -80,95 +97,106 @@ export default function LegalGroupsTable({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
 
-          {/* Header */}
-          <thead className=" border-b border-gray-200 bg-gray-50">
+          <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
-              {[
-                "Legal Group Code",
-                "Legal Group Name",
-                //"Description",
-                "Status",
-                //"No. of Legal Entities",
-                "Action",
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-2 py-1.5  text-[9px] font-bold text-center capitalize tracking-wide text-gray-600"
-                >
-                  {header}
-                </th>
-              ))}
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Parent Division Code
+              </th>
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Parent Division Name
+              </th>
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Status
+              </th>
+
+              <th className="px-2 py-1.5 text-center text-[9px] font-bold tracking-wide text-gray-600">
+                Action
+              </th>
+
             </tr>
           </thead>
 
-
-          {/* Body */}
           <tbody>
             {currentRows.length > 0 ? (
-              currentRows.map((group) => (
+              currentRows.map((division) => (
                 <tr
-                  key={group.legal_group_id}
-                  onClick={() => onSelect(group)}
-                  className={`cursor-pointer border-b ${selectedGroup?.legal_group_id === group.legal_group_id
-                    ? "bg-blue-50"
-                    : "hover:bg-gray-50"}`}>
+                  key={division.parent_division_id}
+                  onClick={() => onSelect(division)}
+                  className={`cursor-pointer border-b ${
+                    selectedParentDivision?.parent_division_id ===
+                    division.parent_division_id
+                      ? "bg-blue-50"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
 
-                  <td className="px-2.5 py-1.5 text-[10px] text-center font-medium leading-tight text-gray-800">
-                    {group.legal_group_code}
+                  <td className="px-2.5 py-1.5 text-center text-[10px] font-medium leading-tight text-gray-800">
+                    {division.parent_division_code}
                   </td>
 
-                  <td className="px-2.5 py-1.5 text-[10px] font-medium text-center leading-tight text-gray-800">
-                    {group.legal_group_name}
+                  <td className="px-2.5 py-1.5 text-center text-[10px] font-medium leading-tight text-gray-800">
+                    {division.parent_division_name}
                   </td>
-
-                  {/* <td className="px-2.5 py-1.5 text-[10px] font-medium text-center leading-tight text-gray-800">
-                  {group.description}
-                </td> */}
 
                   <td className="px-2.5 py-1.5 text-center">
                     <span
-                      className={`inline-flex rounded-full px-1.5 py-0.5 text-[9px] 
-                    font-medium leading-tight ${group.active
+                      className={`inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-medium leading-tight ${
+                        division.active
                           ? "bg-green-100 text-green-700"
                           : "bg-gray-100 text-gray-600"
-                        }`}
+                      }`}
                     >
-                      {group.active ? "Active" : "Inactive"}
+                      {division.active
+                        ? "Active"
+                        : "Inactive"}
                     </span>
                   </td>
 
-                  {/* <td className="px-2.5 py-1.5 text-center text-[10px] font-medium text-gray-800">
-                  {group.legalEntities}
-                </td> */}
-
                   <td className="px-2.5 py-1.5">
+
                     <div className="flex justify-center gap-1">
 
-                      <button onClick={(e) => {
-                        console.log(group)
-                        e.stopPropagation(); // Prevent row click
-                        onEdit?.(group);
-                      }}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log(
+                            "Edit clicked:",
+                            division
+                          );
+                          onEdit?.(division);
+                        }}
                         className="flex h-6 w-6 items-center justify-center rounded hover:bg-gray-100"
                       >
-                        <Pencil size={11} className="text-gray-900" />
+                        <Pencil
+                          size={11}
+                          className="text-gray-900"
+                        />
                       </button>
 
-                      <div className="relative" ref={menuRef}>
+                      <div
+                        className="relative"
+                        ref={menuRef}
+                      >
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
 
-                            const rect = e.currentTarget.getBoundingClientRect();
+                            const rect =
+                              e.currentTarget.getBoundingClientRect();
+
                             setMenuPosition({
                               top: rect.bottom + 5,
                               left: rect.right - 145,
                             });
 
                             setOpenMenu(
-                              openMenu === group.legal_group_id
+                              openMenu ===
+                                division.parent_division_id
                                 ? null
-                                : group.legal_group_id
+                                : division.parent_division_id
                             );
                           }}
                           className="flex h-6 w-6 items-center justify-center rounded hover:bg-gray-100"
@@ -178,7 +206,9 @@ export default function LegalGroupsTable({
                             className="text-gray-900"
                           />
                         </button>
-                        {openMenu && (
+
+                        {openMenu ===
+                          division.parent_division_id && (
                           <div
                             className="fixed z-9999 w-36 rounded-md border border-gray-200 bg-white shadow-lg"
                             style={{
@@ -186,14 +216,10 @@ export default function LegalGroupsTable({
                               left: menuPosition.left,
                             }}
                           >
+
                             <button
                               onClick={() => {
-                                const group = legalGroups.find(
-                                  (g) => g.legal_group_id === openMenu
-                                );
-                                if (group) {
-                                  onSelect?.(group);
-                                }
+                                onSelect(division);
                                 setOpenMenu(null);
                               }}
                               className="block w-full px-3 py-2 text-left text-xs hover:bg-gray-50"
@@ -203,45 +229,48 @@ export default function LegalGroupsTable({
 
                             <button
                               onClick={() => {
-                                const group = legalGroups.find(
-                                  (g) => g.legal_group_id === openMenu
+                                setSelectedStatusDivision(
+                                  division
                                 );
-
-                                if (!group) return;
-
-                                setSelectedStatusGroup(group);
-                                setShowStatusConfirm(true);
+                                setShowStatusConfirm(
+                                  true
+                                );
                                 setOpenMenu(null);
                               }}
                               className="block w-full px-3 py-2 text-left text-xs hover:bg-gray-50"
                             >
-                              {legalGroups.find(
-                                (g) => g.legal_group_id === openMenu
-                              )?.active
+                              {division.active
                                 ? "Deactivate"
                                 : "Activate"}
                             </button>
+
                           </div>
                         )}
+
                       </div>
+
                     </div>
+
                   </td>
+
                 </tr>
               ))
             ) : (
               <tr>
                 <td
                   colSpan={4}
-                  className="py-6 text-center text-sm text-gray-500">
-                  No legal groups found.
+                  className="py-6 text-center text-sm text-gray-500"
+                >
+                  No Parent Divisions found.
                 </td>
               </tr>
             )}
           </tbody>
+
         </table>
       </div>
 
-      {/* Pagination */}
+     {/* Pagination */}
       <div
         className=" flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 bg-gray-50/40 px-4 py-2"
       >
@@ -293,7 +322,7 @@ export default function LegalGroupsTable({
             disabled={
               currentPage === 1
             }
-            className=" rounded p-1 text-gray-500 hover:bg-gray-100 disabled:opacity-40">
+            className=" rounded p-1 text-gray-500 hover:bg-gray-800 disabled:opacity-40">
             <ChevronLeft
               className="h-3.5 w-3.5"
             />
@@ -358,37 +387,37 @@ export default function LegalGroupsTable({
           </button>
         </div>
       </div>
+   {/* Activate / Deactivate Confirmation */}
       <ConfirmationModel
         open={showStatusConfirm}
         title={
-          selectedStatusGroup?.active
-            ? "Deactivate Legal Group"
-            : "Activate Legal Group"
+          selectedStatusDivision?.active
+            ? "Deactivate Parent Division"
+            : "Activate Parent Division"
         }
         message={
-          selectedStatusGroup?.active
-            ? `Are you sure you want to deactivate ${selectedStatusGroup?.legal_group_name}?`
-            : `Are you sure you want to activate ${selectedStatusGroup?.legal_group_name}?`
+          selectedStatusDivision?.active
+            ? `Are you sure you want to deactivate ${selectedStatusDivision?.parent_division_name}?`
+            : `Are you sure you want to activate ${selectedStatusDivision?.parent_division_name}?`
         }
         confirmText={
-          selectedStatusGroup?.active
+          selectedStatusDivision?.active
             ? "Deactivate"
             : "Activate"
         }
         cancelText="Cancel"
-
         onCancel={() => {
           setShowStatusConfirm(false);
-          setSelectedStatusGroup(null);
+          setSelectedStatusDivision(null);
         }}
-
         onConfirm={() => {
-          onStatusToggle(selectedStatusGroup);
+          onStatusToggle?.(selectedStatusDivision);
 
           setShowStatusConfirm(false);
-          setSelectedStatusGroup(null);
+          setSelectedStatusDivision(null);
         }}
       />
+
     </div>
   );
 }
