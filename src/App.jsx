@@ -1,11 +1,12 @@
 import { Toaster } from "react-hot-toast";
-import { BrowserRouter,Routes,Route,Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AdminLayout from "./components/layout/AdminLayout";
 import UsersDashboard from "./pages/UsersDashboard";
 import RolesDashboard from "./pages/RolesDashboard";
 import MasterDataDashboard from "./pages/MasterDataDashboard";
 import AdminMainDashboard from "./pages/AdminMainDashboard";
+import UserAccessMangement from "./pages/UserAccessManagement";
 import PayablesDashboard from "./pages/PayablesDashboard";
 
 export default function App() {
@@ -13,7 +14,7 @@ export default function App() {
   return (
 
     <>
-     <Toaster position="top-right" />
+      <Toaster position="top-right" />
       <BrowserRouter>
         <Routes>
           {/* Admin Layout */}
@@ -45,6 +46,12 @@ export default function App() {
             <Route
               path="roles"
               element={<RolesDashboard />}
+            />
+
+            {/* Roles */}
+            <Route
+              path="useraccess"
+              element={<UserAccessMangement />}
             />
             {/* Master Data */}
             <Route

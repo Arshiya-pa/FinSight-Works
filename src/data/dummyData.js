@@ -3,10 +3,11 @@ import {
   LayoutDashboard, Users, Shield, Key, Lock, Building2, Building,
   Layers, Boxes, Briefcase, Hash, CalendarDays, Coins, FileBarChart,
   Clock, UploadCloud, Activity, CheckCircle2, GitCompare, LayoutGrid,
-  Eye, Filter, Download, Calendar, DollarSign, Bell, ScrollText,UserCheck,
-  UserX,UserRoundX,UserCog,Settings, Info, BarChart3 } from "lucide-react"; 
-  
- export const users = [
+  Eye, Filter, Download, Calendar, DollarSign, Bell, ScrollText, UserCheck,
+  UserX, UserRoundX, UserCog, Settings, Info, BarChart3
+} from "lucide-react";
+
+export const users = [
   { id: 1, code: "EMP001", name: "John Doe", email: "john.doe@fjgroup.com", department: "Finance", role: "CFO", status: "Active", lastLogin: "20 Jun 2026 08:15 AM", jobTitle: "Chief Financial Officer", phone: "+971 50 123 4567", location: "Dubai, UAE", dateOfJoining: "15 Jan 2022", emailVerified: true, mfaEnabled: true },
   { id: 2, code: "EMP002", name: "Jane Smith", email: "jane.smith@fjgroup.com", department: "Finance", role: "Finance Admin", status: "Active", lastLogin: "20 Jun 2026 07:40 AM", jobTitle: "Finance Administrator", phone: "+971 50 222 1122", location: "Dubai, UAE", dateOfJoining: "04 Mar 2022", emailVerified: true, mfaEnabled: true },
   { id: 3, code: "EMP003", name: "Michael Brown", email: "michael.brown@fjgroup.com", department: "IT", role: "System Admin", status: "Active", lastLogin: "20 Jun 2026 09:10 AM", jobTitle: "System Administrator", phone: "+971 50 333 3344", location: "Abu Dhabi, UAE", dateOfJoining: "12 Jul 2021", emailVerified: true, mfaEnabled: true },
@@ -81,150 +82,208 @@ export const stats = [
 export const sections = [
   {
     title: "Dashboard",
-    items: [
-      {
-        label: "Dashboard",
-        path: "/admin/dashboard",
-        icon: LayoutDashboard,
-      },
-    ],
+    icon: LayoutDashboard,
+    path: "/admin/dashboard",
   },
 
   {
     title: "Security",
-    items: [
+    icon: Shield,
+    children: [
       {
         label: "Users",
         path: "/admin/users",
         icon: Users,
       },
-
       {
         label: "Roles",
         path: "/admin/roles",
         icon: Shield,
       },
-
-      // Keep unchanged
-      { label: "User Access", icon: Key },
-      { label: "Permissions", icon: Lock },
+      {
+        label: "User Access",
+        path: "/admin/useraccess",
+        icon: Key,
+      },
+      {
+        label: "Permissions",
+        icon: Lock,
+      },
     ],
   },
 
-
   {
     title: "Master Data",
-    items: [
+    icon: Building2,
+    children: [
       {
         label: "Master Data",
         path: "/admin/master-data",
         icon: Building2,
       },
-
-      // Keep unchanged
-      { label: "Legal Groups", icon: Building2 },
-      { label: "Legal Entities", icon: Building },
-      { label: "Parent Divisions", icon: Layers },
-      { label: "Subdivisions", icon: Boxes },
-      { label: "Business Units", icon: Briefcase },
-      { label: "Analysis Codes", icon: Hash },
-      { label: "Accounting Periods", icon: CalendarDays },
-      { label: "Currency Master", icon: Coins },
+      {
+        label: "Legal Groups",
+        icon: Building2,
+      },
+      {
+        label: "Legal Entities",
+        icon: Building,
+      },
+      {
+        label: "Parent Divisions",
+        icon: Layers,
+      },
+      {
+        label: "Subdivisions",
+        icon: Boxes,
+      },
+      {
+        label: "Business Units",
+        icon: Briefcase,
+      },
+      {
+        label: "Analysis Codes",
+        icon: Hash,
+      },
+      {
+        label: "Accounting Periods",
+        icon: CalendarDays,
+      },
+      {
+        label: "Currency Master",
+        icon: Coins,
+      },
     ],
   },
 
-
-  // Keep everything below unchanged
-
   {
     title: "Data Integration",
-    items: [
-      { label: "Report Configuration", icon: FileBarChart },
-      { label: "Scheduler", icon: Clock },
-      { label: "Upload Centre", icon: UploadCloud },
-      { label: "ETL Monitor", icon: Activity },
-      { label: "Data Quality", icon: CheckCircle2 },
-      { label: "Reconciliation", icon: GitCompare },
+    icon: UploadCloud,
+    children: [
+      {
+        label: "Report Configuration",
+        icon: FileBarChart,
+      },
+      {
+        label: "Scheduler",
+        icon: Clock,
+      },
+      {
+        label: "Upload Centre",
+        icon: UploadCloud,
+      },
+      {
+        label: "ETL Monitor",
+        icon: Activity,
+      },
+      {
+        label: "Data Quality",
+        icon: CheckCircle2,
+      },
+      {
+        label: "Reconciliation",
+        icon: GitCompare,
+      },
     ],
   },
 
   {
     title: "Report Configuration",
-    items: [
-      { label: "Dashboard Modules", icon: LayoutGrid },
-      { label: "Report Visibility", icon: Eye },
-      { label: "Default Filters", icon: Filter },
-      { label: "Export Configuration", icon: Download },
+    icon: LayoutGrid,
+    children: [
+      {
+        label: "Dashboard Modules",
+        icon: LayoutGrid,
+      },
+      {
+        label: "Report Visibility",
+        icon: Eye,
+      },
+      {
+        label: "Default Filters",
+        icon: Filter,
+      },
+      {
+        label: "Export Configuration",
+        icon: Download,
+      },
     ],
   },
 
   {
     title: "System",
-    items: [
-      { label: "Fiscal Calendar", icon: Calendar },
-      { label: "Currency Rates", icon: DollarSign },
-      { label: "Notification Settings", icon: Bell },
-      { label: "Audit Log", icon: ScrollText },
-      { label: "System Settings", icon: Settings },
+    icon: Settings,
+    children: [
+      {
+        label: "Fiscal Calendar",
+        icon: Calendar,
+      },
+      {
+        label: "Currency Rates",
+        icon: DollarSign,
+      },
+      {
+        label: "Notification Settings",
+        icon: Bell,
+      },
+      {
+        label: "Audit Log",
+        icon: ScrollText,
+      },
+      {
+        label: "System Settings",
+        icon: Settings,
+      },
     ],
   },
 ];
-//  export const sections = [
-//  {
-//   title: "Dashboard",
-//   items: [
-//     {
-//       label: "Dashboard",
-//       path: "/admin/dashboard",
-//       icon: LayoutDashboard
-//     }
-//   ]
-// },
-//   { title: "Security", items: [
-//   {
-//   label: "Users",
-//   path: "/admin/users",
-//   icon: Users
-// },
 
-// {
-//   label: "Roles",
-//   path: "/admin/roles",
-//   icon: Shield
-// },
-//     { label: "User Access", icon: Key },
-//     { label: "Permissions", icon: Lock },
-//   ]},
-//   { title: "Master Data", items: [
-//     { label: "Master Data", icon: Building2  },
-//     { label: "Legal Groups", icon: Building2 },
-//     { label: "Legal Entities", icon: Building },
-//     { label: "Parent Divisions", icon: Layers },
-//     { label: "Subdivisions", icon: Boxes },
-//     { label: "Business Units", icon: Briefcase },
-//     { label: "Analysis Codes", icon: Hash },
-//     { label: "Accounting Periods", icon: CalendarDays },
-//     { label: "Currency Master", icon: Coins },
-//   ]},
-//   { title: "Data Integration", items: [
-//     { label: "Report Configuration", icon: FileBarChart },
-//     { label: "Scheduler", icon: Clock },
-//     { label: "Upload Centre", icon: UploadCloud },
-//     { label: "ETL Monitor", icon: Activity },
-//     { label: "Data Quality", icon: CheckCircle2 },
-//     { label: "Reconciliation", icon: GitCompare },
-//   ]},
-//   { title: "Report Configuration", items: [
-//     { label: "Dashboard Modules", icon: LayoutGrid },
-//     { label: "Report Visibility", icon: Eye },
-//     { label: "Default Filters", icon: Filter },
-//     { label: "Export Configuration", icon: Download },
-//   ]},
-//   { title: "System", items: [
-//     { label: "Fiscal Calendar", icon: Calendar },
-//     { label: "Currency Rates", icon: DollarSign },
-//     { label: "Notification Settings", icon: Bell },
-//     { label: "Audit Log", icon: ScrollText },
-//     { label: "System Settings", icon: Settings },
-//   ]},
-// ];
+export const organizationTree = [
+  {
+    id: "fj",
+    label: "FJ Group",
+    access: "full",
+    children: [
+      {
+        id: "fj-fjllc",
+        label: "Future Journey LLC",
+        access: "full",
+        children: [
+          {
+            id: "fj-hvac",
+            label: "HVAC Division",
+            access: "full",
+            children: [
+              {
+                id: "fj-dx",
+                label: "DX Subdivision",
+                access: "full",
+                children: [
+                  { id: "fj-eng", label: "BU Engineering", access: "full" },
+                  { id: "fj-proj", label: "BU Projects", access: "full" },
+                  { id: "fj-svc", label: "BU Service", access: "partial" },
+                ],
+              },
+              {
+                id: "fj-chiller",
+                label: "Chiller Subdivision",
+                access: "partial",
+                children: [
+                  { id: "fj-mfg", label: "BU Manufacturing", access: "partial" },
+                  { id: "fj-asm", label: "BU Assembly", access: "none" },
+                  { id: "fj-as", label: "BU After Sales", access: "none" },
+                ],
+              },
+            ],
+          },
+          { id: "fj-elec", label: "Electrical Division", access: "none" },
+        ],
+      },
+    ],
+  },
+  { id: "rkme", label: "RKME Group", access: "partial" },
+  { id: "zenith", label: "Zenith Group", access: "none" },
+  { id: "abc", label: "ABC Holdings", access: "none" },
+  { id: "xyz", label: "XYZ Group", access: "none" },
+  { id: "other", label: "Other Groups", access: "none" },
+];

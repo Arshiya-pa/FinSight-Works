@@ -23,25 +23,24 @@ export default function StatCard({
   onClick,
   loading = false,
   children,
-  iconContainerClass = "",
+  iconContainerClass = "", compact = false,
 }) {
   const trendColor =
     trendDir === "up"
       ? "text-green-600"
       : trendDir === "down"
-      ? "text-red-600"
-      : "text-gray-400";
+        ? "text-red-600"
+        : "text-gray-400";
 
   const arrow =
     trendDir === "up"
       ? "↑"
       : trendDir === "down"
-      ? "↓"
-      : "—";
+        ? "↓"
+        : "—";
 
-  const defaultIconClass = `flex h-8 w-8 items-center justify-center rounded-lg ${
-    colorMap[color] || colorMap.blue
-  }`;
+  const defaultIconClass = `flex h-8 w-8 items-center justify-center rounded-lg ${colorMap[color] || colorMap.blue
+    }`;
 
   return (
     <motion.div
@@ -51,19 +50,23 @@ export default function StatCard({
       whileHover={{ y: -2 }}
       onClick={onClick}
       className={`
-        bg-white
-        rounded-lg
-        border
-        border-gray-200
-        shadow-sm
-        hover:shadow-md
-        transition-all
-        duration-300
-        p-2.5
-        min-h-21
-        ${onClick ? "cursor-pointer" : ""}
-        ${className}
-      `}
+       bg-white
+       rounded-lg
+       border
+       border-gray-200
+       shadow-sm
+       hover:shadow-md
+       transition-all
+       duration-300 
+     
+       ${compact
+          ? "px-3 py-2 h-22.5"
+          : "p-2.5 min-h-21"
+        }
+     
+       ${onClick ? "cursor-pointer" : ""}
+       ${className}
+     `}
     >
       {loading ? (
         <div className="animate-pulse">
@@ -88,21 +91,43 @@ export default function StatCard({
 
             <div className="flex-1 min-w-0">
               {label && (
-                <p className="text-[10px] font-medium uppercase tracking-wide text-black">
+                <p
+                  className={
+                    compact
+                      ? "text-[10px] font-semibold text-gray-700"
+                      : "text-[10px] font-medium uppercase tracking-wide text-black"
+                  }>
                   {label}
                 </p>
               )}
 
-              <p className="truncate text-sm font-medium text-black">
+              <p
+                className={
+                  compact
+                    ? "hidden"
+                    : "truncate text-sm font-medium text-black"
+                }>
                 {title}
               </p>
 
-              <p className="text-2xl font-bold text-gray-900">
+              <p
+                className={
+                  compact
+                    ? "text-xl font-bold text-gray-900 mt-1"
+                    : "text-2xl font-bold text-gray-900"
+                }
+              >
                 {value}
               </p>
 
               {description && (
-                <p className="truncate text-[11px] text-gray-500">
+                <p
+                  className={
+                    compact
+                      ? "truncate text-[10px] text-gray-500"
+                      : "truncate text-[11px] text-gray-500"
+                  }
+                >
                   {description}
                 </p>
               )}

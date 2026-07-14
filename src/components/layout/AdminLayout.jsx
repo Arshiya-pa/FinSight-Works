@@ -56,11 +56,12 @@ export default function AdminLayout({
     "/admin/dashboard": ["Admin", "Dashboard"],
     "/admin/users": ["Admin", "Security", "Users"],
     "/admin/roles": ["Admin", "Security", "Roles"],
+    "/admin/useraccess": ["Admin", "Security", "User Access"],
     "/admin/master-data": ["Admin", "Master Data"],
   };
   const currentBreadcrumbs =
     breadcrumbMap[location.pathname] || ["Admin"];
-  return (
+    return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
       <SidebarAdmin activeItem={activeMenu} />

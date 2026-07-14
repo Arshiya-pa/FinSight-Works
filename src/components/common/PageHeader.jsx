@@ -44,7 +44,7 @@ export default function PageHeader({
           className={
             isDashboard
               ? "text-[24px] font-bold tracking-tight leading-none text-gray-900"
-              : "text-base font-semibold leading-none text-gray-900"
+              : "text-xl font-bold leading-none text-gray-900"
           }
         >
           {title}
@@ -54,8 +54,8 @@ export default function PageHeader({
           <p
             className={
               isDashboard
-                ? "mt-1 text-[12px] leading-4 text-gray-500 max-w-3xl"
-                : "mt-0 text-[10px] leading-3 text-gray-500"
+                ? "mt-1 text-[12px] leading-4 text-gray-700 max-w-3xl"
+                : "mt-0 text-[10px] leading-3 text-gray-700"
             }
           >
             {subtitle}

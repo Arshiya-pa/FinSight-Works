@@ -380,6 +380,8 @@ export default function FilterBar({
   // NEW USERS ONLY
   showMoreFilters = false,
   onMoreFilters,
+  //user access
+   customOrder = false,
 
 }) {
 
@@ -396,123 +398,158 @@ export default function FilterBar({
       <div
         className="flex items-end justify-between gap-2">
 
-        {/* LEFT */}
-        <div className={`flex gap-2 ${stackActions ? "items-start" : "items-end"}`}>
-          {/* SEARCH */}
-          <div className={compact ? "w-60" : "w-72"}>
-            <div className="relative">
-              <Search
-                className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+     {/* LEFT */}
+<div className={`flex gap-2 ${stackActions ? "items-start" : "items-end"}`}>
 
-              <input
-                value={search ?? ""}
-                onChange={(e) => setSearch?.(e.target.value)}
-                placeholder={placeholder}
-                className=" h-8 w-full rounded-md border border-gray-200 bg-white
-                pl-8 pr-3 text-[12px] placeholder:text-gray-400
-                focus:border-blue-500
-                focus:outline-none
-                focus:ring-2
-                focus:ring-blue-500/30
-                "/>
-            </div>
-          </div>
+  {/* ================= DEFAULT ORDER ================= */}
+  {!customOrder && (
+    <>
+      {/* SEARCH */}
+      <div className={compact ? "w-60" : "w-72"}>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
 
-          {/* FILTERS */}
-          {
-            filters.map((filter) => (
-              <Select
-                key={filter.label}
-                label={filter.label}
-                options={filter.options}
-                value={filter.value}
-                onChange={filter.onChange}
-                compact={compact}
-              />
-            ))
-          }
-
-          {/* ACTIVE ONLY */}
-          {
-            setActiveOnly &&
-            <div
-              className={
-                stackActions
-                  ?
-                  "flex flex-col items-start gap-1"
-                  :
-                  "flex items-center gap-2"
-              }
-            >
-              <div
-                className="flex h-8 items-center gap-2 rounded-md bg-white px-3">
-                <span className="text-[10px] font-medium text-gray-700">
-                  {toggleLabel}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveOnly(!activeOnly)}
-                  className={`relative inline-flex h-5 w-10 items-center rounded-full
-                    ${activeOnly
-                      ?
-                      "bg-blue-600"
-                      :
-                      "bg-gray-300"
-                    }`}>
-                  <span
-                    className={`inline-block h-4 w-4 rounded-full bg-white transition-transform
-                      ${activeOnly
-                        ?
-                        "translate-x-4"
-                        :
-                        "translate-x-0.5"
-                      }`} />
-                </button>
-              </div>
-
-
-              {/* ROLE RESET */}
-              {
-                stackActions && onReset &&
-                <button type="button"
-                  onClick={onReset}
-                  className="w-25 flex h-8 items-center justify-center gap-1 rounded-md border border-gray-300 bg-white
-                  text-[10px] font-medium text-gray-700 hover:bg-gray-50">
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  Reset
-                </button>
-              }
-            </div>
-          }
-
-          {/* USERS MORE FILTER */}
-          {
-            showMoreFilters &&
-            <button
-              type="button"
-              onClick={onMoreFilters}
-              className="flex h-8 items-center gap-1 rounded-md border border-gray-300 bg-white px-3
-              text-[10px] font-medium text-gray-700 hover:bg-gray-50">
-              <SlidersHorizontal
-                className="h-3.5 w-3.5" />
-              More Filters
-            </button>
-          }
-
-          {/* NORMAL RESET */}
-          {
-            onReset && !stackActions &&
-            <button
-              type="button"
-              onClick={onReset}
-              className="flex h-8 items-center gap-1 rounded-md border border-gray-300b bg-white px-3 text-[12px]
-                font-medium text-gray-700 hover:bg-gray-50">
-              <RotateCcw className="h-3.5 w-3.5" />
-              Reset
-            </button>
-          }
+          <input
+            value={search ?? ""}
+            onChange={(e) => setSearch?.(e.target.value)}
+            placeholder={placeholder}
+            className="h-8 w-full rounded-md border border-gray-200 bg-white pl-8 pr-3 text-[12px] placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+          />
         </div>
+      </div>
+
+      {/* FILTERS */}
+      {filters.map((filter) => (
+        <Select
+          key={filter.label}
+          label={filter.label}
+          options={filter.options}
+          value={filter.value}
+          onChange={filter.onChange}
+          compact={compact}
+        />
+      ))}
+    </>
+  )}
+
+  {/* ================= USER ACCESS ORDER ================= */}
+  {customOrder && (
+    <>
+      {/* Legal Group */}
+      {filters[2] && (
+        <Select
+          label={filters[2].label}
+          options={filters[2].options}
+          value={filters[2].value}
+          onChange={filters[2].onChange}
+          compact={compact}
+        />
+      )}
+
+      {/* Role */}
+      {filters[1] && (
+        <Select
+          label={filters[1].label}
+          options={filters[1].options}
+          value={filters[1].value}
+          onChange={filters[1].onChange}
+          compact={compact}
+        />
+      )}
+
+      {/* Search */}
+      <div className={compact ? "w-60" : "w-72"}>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+
+          <input
+            value={search ?? ""}
+            onChange={(e) => setSearch?.(e.target.value)}
+            placeholder={placeholder}
+            className="h-8 w-full rounded-md border border-gray-200 bg-white pl-8 pr-3 text-[12px] placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+          />
+        </div>
+      </div>
+
+      {/* Status */}
+      {filters[0] && (
+        <Select
+          label={filters[0].label}
+          options={filters[0].options}
+          value={filters[0].value}
+          onChange={filters[0].onChange}
+          compact={compact}
+        />
+      )}
+    </>
+  )}
+
+  {/* ACTIVE ONLY */}
+  {setActiveOnly && (
+    <div
+      className={
+        stackActions
+          ? "flex flex-col items-start gap-1"
+          : "flex items-center gap-2"
+      }
+    >
+      <div className="flex h-8 items-center gap-2 rounded-md bg-white px-3">
+        <span className="text-[10px] font-medium text-gray-700">
+          {toggleLabel}
+        </span>
+
+        <button
+          type="button"
+          onClick={() => setActiveOnly(!activeOnly)}
+          className={`relative inline-flex h-5 w-10 items-center rounded-full ${
+            activeOnly ? "bg-blue-600" : "bg-gray-300"
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
+              activeOnly ? "translate-x-4" : "translate-x-0.5"
+            }`}
+          />
+        </button>
+      </div>
+
+      {stackActions && onReset && (
+        <button
+          type="button"
+          onClick={onReset}
+          className="w-25 flex h-8 items-center justify-center gap-1 rounded-md border border-gray-300 bg-white text-[10px] font-medium text-gray-700 hover:bg-gray-50"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          Reset
+        </button>
+      )}
+    </div>
+  )}
+
+  {/* RESET */}
+  {onReset && !stackActions && (
+    <button
+      type="button"
+      onClick={onReset}
+      className="flex h-8 items-center gap-1 rounded-md border border-gray-300 bg-white px-3 text-[12px] font-medium text-gray-700 hover:bg-gray-50"
+    >
+      <RotateCcw className="h-3.5 w-3.5" />
+      Reset
+    </button>
+  )}
+
+  {/* MORE FILTERS */}
+  {showMoreFilters && (
+    <button
+      type="button"
+      onClick={onMoreFilters}
+      className="flex h-8 items-center gap-1 rounded-md border border-gray-300 bg-white px-3 text-[10px] font-medium text-gray-700 hover:bg-gray-50"
+    >
+      <SlidersHorizontal className="h-3.5 w-3.5" />
+      More Filters
+    </button>
+  )}
+</div>
 
         {/* RIGHT */}
         <div

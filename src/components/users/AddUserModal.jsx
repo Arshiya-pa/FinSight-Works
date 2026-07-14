@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import { X, UserPlus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getRoles, addUser,updateUser,} from "../../api/userApi";
+import { getRoles, addUser, updateUser, } from "../../api/userApi";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function AddUserModal({
     open,
     onClose,
-    onSuccess,editUser,
+    onSuccess, editUser,
 }) {
     const [formData, setFormData] = useState({
         employee_code: "",
@@ -30,10 +30,18 @@ export default function AddUserModal({
         try {
             setLoadingRoles(true);
             const response = await getRoles();
-            console.log(response.data);
-            setRoleOptions(response.data.data || response.data);
+            console.log("Roles API Response:", response.data);
+            const roles = response.data || [];
+            const formattedRoles = roles.map((role) => ({
+                id: role.role_code,
+                code: role.role_code,
+                name: role.role_name,
+            }));
+            console.log("Formatted Roles:", formattedRoles);
+            setRoleOptions(formattedRoles);
         } catch (error) {
-            console.error(error);
+            console.error("Role loading error:", error);
+            toast.error("Failed to load roles");
         } finally {
             setLoadingRoles(false);
         }
@@ -41,37 +49,37 @@ export default function AddUserModal({
 
     /*.....  Populate Form When Editing....*/
     useEffect(() => {
-    if (!open) return;
-    fetchRoles();
-    if (editUser) {
-        setFormData({
-            employee_code: editUser.code,
-            employee_name: editUser.name,
-            official_email: editUser.email,
-            designation: editUser.jobTitle,
-            department:
-           editUser.department === "-"
-                    ? ""
-                    : editUser.department,
-            reporting_manager_code:
-                editUser.raw?.reporting_manager_code || "",
-            role_code: editUser.role,
-            active: editUser.status === "Active",
-        });
-    } else {
-        setFormData({
-            employee_code: "",
-            employee_name: "",
-            official_email: "",
-            designation: "",
-            department: "",
-            reporting_manager_code: "",
-            role_code: "",
-            active: true,
-        });
+        if (!open) return;
+        fetchRoles();
+        if (editUser) {
+            setFormData({
+                employee_code: editUser.code,
+                employee_name: editUser.name,
+                official_email: editUser.email,
+                designation: editUser.jobTitle,
+                department:
+                    editUser.department === "-"
+                        ? ""
+                        : editUser.department,
+                reporting_manager_code:
+                    editUser.raw?.reporting_manager_code || "",
+                role_code: editUser.role,
+                active: editUser.status === "Active",
+            });
+        } else {
+            setFormData({
+                employee_code: "",
+                employee_name: "",
+                official_email: "",
+                designation: "",
+                department: "",
+                reporting_manager_code: "",
+                role_code: "",
+                active: true,
+            });
 
-    }
-   }, [open, editUser]);
+        }
+    }, [open, editUser]);
 
     const validate = () => {
         const errors = [];
@@ -83,14 +91,14 @@ export default function AddUserModal({
             errors.push("Employee Name is required");
 
         if (!formData.official_email.trim()) {
-        errors.push("Official Email is required");
+            errors.push("Official Email is required");
         }
-        else if(
-         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-            formData.official_email
-         )
-        ){
-        errors.push("Enter a valid email address");
+        else if (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                formData.official_email
+            )
+        ) {
+            errors.push("Enter a valid email address");
         }
 
         if (!formData.designation.trim())
@@ -107,14 +115,14 @@ export default function AddUserModal({
     };
 
     const isFormValid = () => {
-    return (
-    formData.employee_code.trim() &&
-    formData.employee_name.trim() &&
-    formData.official_email.trim() &&
-    formData.designation.trim() &&
-    formData.role_code
-    );
-   };
+        return (
+            formData.employee_code.trim() &&
+            formData.employee_name.trim() &&
+            formData.official_email.trim() &&
+            formData.designation.trim() &&
+            formData.role_code
+        );
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -126,65 +134,66 @@ export default function AddUserModal({
 
 
     const handleSave = async () => {
-            console.log("SAVE BUTTON CLICKED");
+        console.log("SAVE BUTTON CLICKED");
         if (!validate()) return;
 
         const payload = {
-         employee_code: formData.employee_code,
-         employee_name: formData.employee_name,
-         official_email: formData.official_email,
-         designation: formData.designation,
-         department: formData.department || "",
-         reporting_manager_code: formData.reporting_manager_code || "",
-         role_code: formData.role_code,
-         active: formData.active,
-          };
-        
+            employee_code: formData.employee_code,
+            employee_name: formData.employee_name,
+            official_email: formData.official_email,
+            designation: formData.designation,
+            department: formData.department || "",
+            reporting_manager_code: formData.reporting_manager_code || "",
+            role_code: formData.role_code,
+            active: formData.active,
+        };
+
         console.log("Payload:", payload);
         try {
             setSaving(true);
             if (isEdit) {
-            await updateUser(editUser.id,payload);
-             toast.success( "User updated successfully");
+                await updateUser(editUser.id, payload);
+                toast.success("User updated successfully");
             } else {
-               await addUser(payload);
-               toast.success("User created successfully")}
-
-             if (!isEdit) {
-            setFormData({
-               employee_code:"",
-               employee_name:"",
-               official_email:"",
-               designation:"",
-               department:"",
-               reporting_manager_code:"",
-               role_code:"",
-               active:true,
-             });
+                await addUser(payload);
+                toast.success("User created successfully")
             }
-             onSuccess();
-             onClose();
-            } catch (error) {
+
+            if (!isEdit) {
+                setFormData({
+                    employee_code: "",
+                    employee_name: "",
+                    official_email: "",
+                    designation: "",
+                    department: "",
+                    reporting_manager_code: "",
+                    role_code: "",
+                    active: true,
+                });
+            }
+            onSuccess();
+            onClose();
+        } catch (error) {
             console.log(error);
             if (error.response) {
-              toast.error(
-                  error.response.data.detail ||
-                  "Server error"
-              );
-              console.log(
-                  "Backend Error:",
-                  error.response.data
-              );
-          } else if (error.request) {
-              toast.error(
-                  "Unable to connect to server"
-              );
-          } else {
-              toast.error(error.message);
-           }
-         }
-       }
-      if (!open) return null;
+                toast.error(
+                    error.response.data.detail ||
+                    "Server error"
+                );
+                console.log(
+                    "Backend Error:",
+                    error.response.data
+                );
+            } else if (error.request) {
+                toast.error(
+                    "Unable to connect to server"
+                );
+            } else {
+                toast.error(error.message);
+            }
+        }
+    }
+    if (!open) return null;
     return (
         <AnimatePresence>
             <motion.div
@@ -213,7 +222,7 @@ export default function AddUserModal({
                                 </h2>
 
                                 <p className="text-sm text-gray-500">
-                                    {isEdit ? "Update user information" : "Create a new application user" }
+                                    {isEdit ? "Update user information" : "Create a new application user"}
                                 </p>
                             </div>
                         </div>
@@ -279,8 +288,8 @@ export default function AddUserModal({
                                 />
                             </div>
 
-                               {/* Role */}
-                             <div>
+                            {/* Role */}
+                            <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-700">
                                     Role <span className="text-red-600">*</span>
                                 </label>
@@ -293,16 +302,16 @@ export default function AddUserModal({
                                     <option value="">
                                         Select Role
                                     </option>
-                                    {
-                                        roleOptions.map((role) => (
-                                            <option
-                                                key={role.id}
-                                                value={role.code}
-                                            >
-                                                {role.name}
-                                            </option>
-                                        ))
-                                    }
+
+                                    {roleOptions.map((role) => (
+                                        <option
+                                            key={role.code}
+                                            value={role.code}
+                                        >
+                                            {role.name}
+                                        </option>
+                                    ))}
+
                                 </select>
                             </div>
 
@@ -325,50 +334,50 @@ export default function AddUserModal({
 
                             {/* Department */}
                             <div>
-                               <label className="block mb-2 text-sm font-medium text-gray-700">
-                                   Department 
-                               </label>
+                                <label className="block mb-2 text-sm font-medium text-gray-700">
+                                    Department
+                                </label>
                                 <select
-                                name="department"
-                                value={formData.department}
-                                onChange={handleChange}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2.5">
-                            <option value="">
-                                Select Department
-                            </option>
-                            
-                            <option value="Finance">
-                                Finance
-                            </option>
-                            
-                            <option value="HR">
-                                HR
-                            </option>
-                            
-                            <option value="Accounts">
-                                Accounts
-                            </option>
-                            
-                            <option value="Operations">
-                                Operations
-                            </option>
-                            
-                            </select>
+                                    name="department"
+                                    value={formData.department}
+                                    onChange={handleChange}
+                                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5">
+                                    <option value="">
+                                        Select Department
+                                    </option>
+
+                                    <option value="Finance">
+                                        Finance
+                                    </option>
+
+                                    <option value="HR">
+                                        HR
+                                    </option>
+
+                                    <option value="Accounts">
+                                        Accounts
+                                    </option>
+
+                                    <option value="Operations">
+                                        Operations
+                                    </option>
+
+                                </select>
                             </div>
 
                             {/* Reporting Manager */}
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-700">
-                                    Reporting Manager Code 
+                                    Reporting Manager Code
                                 </label>
 
                                 <input
-                                  type="text"
-                                  name="reporting_manager_code"
-                                  value={formData.reporting_manager_code}
-                                  onChange={handleChange}
-                                  placeholder="Enter Employee Code"
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm
+                                    type="text"
+                                    name="reporting_manager_code"
+                                    value={formData.reporting_manager_code}
+                                    onChange={handleChange}
+                                    placeholder="Enter Employee Code"
+                                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm
                                  focus:ring-2 focus:ring-blue-500 outline-none"/>
                             </div>
 
@@ -425,11 +434,11 @@ export default function AddUserModal({
                             Cancel
                         </button>
 
-                       <button onClick={handleSave} disabled={ saving || !isFormValid()}
+                        <button onClick={handleSave} disabled={saving || !isFormValid()}
                             className=" rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white
                                 hover:bg-blue-700 disabled:bg-gray-400">
-                            {saving ? ( isEdit ? "Updating..." : "Saving...") : ( isEdit ? "Update User" : "Save User")
-}
+                            {saving ? (isEdit ? "Updating..." : "Saving...") : (isEdit ? "Update User" : "Save User")
+                            }
                         </button>
                     </div>
                 </motion.div>

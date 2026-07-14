@@ -11,6 +11,7 @@ import UserTable from "../components/users/UserTable";
 import UserDetails from "../components/users/UserDetails";
 import FooterNote from "../components/FooterNote";
 import AddUserModal from "../components/users/AddUserModal";
+import ConfirmationModel from "../components/common/ConfirmationModel";
 
 import {
   stats,
@@ -45,6 +46,8 @@ export default function UsersDashboard() {
   const [editingUser, setEditingUser] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [showEditConfirm, setShowEditConfirm] = useState(false);
+  const [userToEdit, setUserToEdit] = useState(null);
 
   /* -------------------- PAGINATION -------------------- */
   const [currentPage, setCurrentPage] = useState(1);
@@ -103,57 +106,57 @@ export default function UsersDashboard() {
       setLoading(false);
     }
   };
-console.log("........",status);
-console.log("----------",activeOnly);
+  console.log("........", status);
+  console.log("----------", activeOnly);
   /* -------------------- FETCH ROLES -------------------- */
- const fetchRoles = async () => {
-  try {
-    const response = await getRoles();
-    console.log(response.data);
-    const roles = response.data.map((item, index) => ({
-      id: index + 1,
-      code: item.role_code,
-      name: item.role_name,
-    }));
-    setRoleOptions([
-      {
-        id: 0,
-        code: "All",
-        name: "All",
-      },
-      ...roles,
-    ]);
+  const fetchRoles = async () => {
+    try {
+      const response = await getRoles();
+      console.log(response.data);
+      const roles = response.data.map((item, index) => ({
+        id: index + 1,
+        code: item.role_code,
+        name: item.role_name,
+      }));
+      setRoleOptions([
+        {
+          id: 0,
+          code: "All",
+          name: "All",
+        },
+        ...roles,
+      ]);
 
-  } catch (error) {
-    console.error(error);
-  }
-};
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   /* -------------------- FETCH LEGAL GROUPS -------------------- */
   const fetchLegalGroups = async () => {
-  try {
-    const response = await getLegalGroups();
+    try {
+      const response = await getLegalGroups();
 
-    console.log("Legal Groups:", response.data);
+      console.log("Legal Groups:", response.data);
 
-    const groups = response.data.map((item) => ({
-      id: item.legal_group_id,
-      code: item.legal_group_code,
-      name: item.legal_group_name,
-    }));
+      const groups = response.data.map((item) => ({
+        id: item.legal_group_id,
+        code: item.legal_group_code,
+        name: item.legal_group_name,
+      }));
 
-    setLegalGroupOptions([
-      {
-        id: 0,
-        code: "All",
-        name: "All",
-      },
-      ...groups,
-    ]);
-  } catch (error) {
-    console.error(error);
-  }
-};
+      setLegalGroupOptions([
+        {
+          id: 0,
+          code: "All",
+          name: "All",
+        },
+        ...groups,
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   /* -------------------- PAGE LOAD -------------------- */
 
@@ -274,47 +277,58 @@ console.log("----------",activeOnly);
   };
   /* -------------------- EDIT USER FORM-------------------- */
   const handleEdit = (user) => {
-    toast.custom((t) => (
-      <div className="w-90 rounded-xl border border-gray-200 bg-white p-4 shadow-xl">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-            <Edit className="h-5 w-5 text-blue-600" />
-          </div>
+    setUserToEdit(user);
+    setShowEditConfirm(true);
+    <div className="w-90 rounded-xl border border-gray-200 bg-white p-4 shadow-xl">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+          <Edit className="h-5 w-5 text-blue-600" />
+        </div>
 
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-gray-900">
-              Edit User
-            </h3>
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-gray-900">
+            Edit User
+          </h3>
 
-            <p className="mt-1 text-xs text-gray-600">
-              Do you want to edit{" "}
-              <span className="font-semibold">
-                {user.name}
-              </span>
-              ?
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                onClick={() => toast.dismiss(t.id)}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium hover:bg-gray-100"
-              >Cancel</button>
+          <p className="mt-1 text-xs text-gray-600">
+            Do you want to edit{" "}
+            <span className="font-semibold">
+              {user.name}
+            </span>
+            ?
+          </p>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium hover:bg-gray-100"
+            >Cancel</button>
 
-              <button
-                onClick={() => {
-                  toast.dismiss(t.id);
-                  setSelectedUser(user);
-                  setShowEditUser(true);
-                }}
-                className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
-              >Edit
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                setSelectedUser(user);
+                setShowEditUser(true);
+              }}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+            >Edit
+            </button>
           </div>
         </div>
       </div>
-    ));
+    </div>
   };
 
+  const handleConfirmEdit = () => {
+    setShowEditConfirm(false);
+    setSelectedUser(userToEdit);
+    setShowEditUser(true);
+    setUserToEdit(null);
+  };
+
+  const handleCancelEdit = () => {
+    setShowEditConfirm(false);
+    setUserToEdit(null);
+  };
 
   const handleToggleStatus = async (user) => {
     try {
@@ -386,20 +400,20 @@ console.log("----------",activeOnly);
   console.log("Active Only:", activeOnly);
   /* -------------------- LOADING -------------------- */
 
-if (loading) {
-  return (
-    <div className="p-6 text-sm">
-      Loading Users...
-    </div>
-  );
-}
+  if (loading) {
+    return (
+      <div className="p-6 text-sm">
+        Loading Users...
+      </div>
+    );
+  }
   console.log("Current Selected User:", selectedUser);
   /* ---------- PART 2 STARTS WITH RETURN ---------- */
   return (
 
-      <div className="flex flex-col gap-0.5">
-        {/* HEADER */}
-        <div>
+    <div className="flex flex-col gap-0.5">
+      {/* HEADER */}
+      <div>
         <PageHeader
           title="Users"
           subtitle="Manage application users, their roles and account status."
@@ -508,7 +522,7 @@ if (loading) {
 
         </div>
       </div>
-  
+
       {/* FOOTER */}
       <div className="fixed bottom-0 left-55 right-0 border-t border-gray-200 bg-white px-3 py-1 shadow-sm">
         <FooterNote
@@ -517,7 +531,7 @@ if (loading) {
           lastUpdated="20 Jun 2026 10:15 AM"
           onRefresh={() => console.log("Refresh clicked")}
         />
-       </div>
+      </div>
       <AddUserModal
         open={showAddUser}
         onClose={() => setShowAddUser(false)}
@@ -525,6 +539,20 @@ if (loading) {
           fetchUsers();
           setShowAddUser(false);
         }}
+      />
+
+      <ConfirmationModel
+        open={showEditConfirm}
+        title="Edit User"
+        message={
+          userToEdit
+            ? `Do you want to edit ${userToEdit.name}?`
+            : ""
+        }
+        confirmText="Edit"
+        cancelText="Cancel"
+        onConfirm={handleConfirmEdit}
+        onCancel={handleCancelEdit}
       />
     </div>
   );
