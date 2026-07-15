@@ -10,12 +10,6 @@ import {
     Search
 } from "lucide-react";
 
-import {
-    organizationTree
-} from "../../data/dummyData";
-
-
-
 /* ================= CHILD IDS ================= */
 
 function getChildIds(node) {
@@ -412,13 +406,14 @@ function Node({
 
 }
 export default function HierarchyTree({
+    tree,
+    selectedUser,
+    selected,
+    setSelected
+ }){
 
-    selectedUser
 
-}) {
-
-
-    const [selected, setSelected] = useState([]);
+   // const [selected, setSelected] = useState([]);
 
 
     const [search, setSearch] = useState("");
@@ -465,7 +460,7 @@ export default function HierarchyTree({
 
 
 
-        loop(organizationTree);
+        loop(tree);
 
 
 
@@ -488,7 +483,7 @@ export default function HierarchyTree({
 
         if(!search.trim()){
 
-            return organizationTree;
+            return tree;
 
         }
 
@@ -566,7 +561,7 @@ export default function HierarchyTree({
 
         return filter(
 
-            organizationTree
+            tree
 
         );
 
@@ -665,7 +660,7 @@ export default function HierarchyTree({
 
         count(
 
-            organizationTree
+            tree
 
         );
 
@@ -837,7 +832,7 @@ p-2
 "
 >
                 {
-                    filteredTree.map(node=>(
+                    tree.map(node=>(
                         <Node
                             key={node.id}
                             node={node}

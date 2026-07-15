@@ -1,6 +1,7 @@
 import { Pencil, Edit3 } from "lucide-react";
 import AvatarBadge from "../AvatarBadge";
 import StatusBadge from "../StatusBadge";
+import ChildItemsTable from "../masterdata/ChildItemsTable";
 
 
 function InfoField({ label, children }) {
@@ -67,7 +68,7 @@ export default function SubDivisionDetails({
 
                     >
 
-                        <Pencil className="h-3.5 w-3.5 text-gray-500"/>
+                        <Pencil className="h-3.5 w-3.5 text-gray-500" />
 
                     </button>
 
@@ -81,7 +82,7 @@ export default function SubDivisionDetails({
 
                     >
 
-                        <Edit3 className="h-3.5 w-3.5 text-gray-500"/>
+                        <Edit3 className="h-3.5 w-3.5 text-gray-500" />
 
                     </button>
 
@@ -108,7 +109,7 @@ export default function SubDivisionDetails({
 
                         subdivision.subdivision_name
 
-                            ?.substring(0,2)
+                            ?.substring(0, 2)
 
                             .toUpperCase()
 
@@ -140,9 +141,9 @@ export default function SubDivisionDetails({
 
                                 subdivision.active
 
-                                ? "Active"
+                                    ? "Active"
 
-                                : "Inactive"
+                                    : "Inactive"
 
                             }
 
@@ -151,9 +152,9 @@ export default function SubDivisionDetails({
 
                                 subdivision.active
 
-                                ? "green"
+                                    ? "green"
 
-                                : "gray"
+                                    : "gray"
 
                             }
 
@@ -284,15 +285,15 @@ export default function SubDivisionDetails({
 
                             subdivision.active
 
-                            ? "Active"
+                                ? "Active"
 
-                            : "Inactive"
+                                : "Inactive"
 
                         }
 
 
 
-                        onChange={(e)=>
+                        onChange={(e) =>
 
                             onStatusChange?.(
 
@@ -348,7 +349,21 @@ export default function SubDivisionDetails({
 
             <div className="mt-1 mb-0.5 border-t border-gray-200" />
 
-
+            <ChildItemsTable
+                title="Business Units under this Subdivision"
+                items={subdivision?.businessUnits || []}
+                total={subdivision?.totalBusinessUnits}
+                columns={[
+                    {
+                        key: "code",
+                        label: "BU Code",
+                    },
+                    {
+                        key: "name",
+                        label: "Business Unit",
+                    },
+                ]}
+            />
 
         </div>
 

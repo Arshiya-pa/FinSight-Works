@@ -1,7 +1,7 @@
 import { Pencil, Edit3 } from "lucide-react";
 import AvatarBadge from "../AvatarBadge";
 import StatusBadge from "../StatusBadge";
-import LegalEntitiesTable from "./LegalEntitiesTable";
+import ChildItemsTable from "../masterdata/ChildItemsTable";
 
 function InfoField({ label, children }) {
     return (
@@ -141,13 +141,21 @@ export default function LegalEntityDetails({
             <div className="mt-1 mb-0.5 border-t border-gray-200" />
 
 
-            {/* Table 
-            <LegalEntitiesTable
-                entities={entities}
-                total={group.legalEntityCount}
-                onViewAll={onViewAll}
-            />*/}
-
+            <ChildItemsTable
+                title="Parent Divisions under this Legal Entity"
+                items={entity?.parentDivisions || []}
+                total={entity?.totalParentDivisions}
+                columns={[
+                    {
+                        key: "code",
+                        label: "Division Code",
+                    },
+                    {
+                        key: "name",
+                        label: "Parent Division",
+                    },
+                ]}
+            />
         </div>
     );
 }

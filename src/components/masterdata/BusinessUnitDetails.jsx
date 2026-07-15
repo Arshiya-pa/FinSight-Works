@@ -1,6 +1,7 @@
 import { Pencil, Edit3 } from "lucide-react";
 import AvatarBadge from "../AvatarBadge";
 import StatusBadge from "../StatusBadge";
+import ChildItemsTable from "../masterdata/ChildItemsTable";
 
 
 function InfoField({ label, children }) {
@@ -60,12 +61,12 @@ export default function BusinessUnitDetails({
                 <AvatarBadge
                     initials={
                         businessUnit.business_unit_name
-                            ?.substring(0,2)
+                            ?.substring(0, 2)
                             .toUpperCase()
                     }
                 />
                 <div>
-                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                         <h3 className="text-[13px] font-semibold text-gray-900">
                             {businessUnit.business_unit_name}
                         </h3>
@@ -94,7 +95,7 @@ export default function BusinessUnitDetails({
                     {businessUnit.business_unit_name || "-"}
                 </InfoField>
 
-               <InfoField label="Subdivision Code">
+                <InfoField label="Subdivision Code">
                     {businessUnit.subdivision_code || "-"}
                 </InfoField>
 
@@ -115,7 +116,7 @@ export default function BusinessUnitDetails({
                 </InfoField>
 
                 <InfoField label="Parent Division ID">
-                   {businessUnit.parent_division_id || "-"}
+                    {businessUnit.parent_division_id || "-"}
                 </InfoField>
 
                 {/* Status */}
@@ -125,12 +126,12 @@ export default function BusinessUnitDetails({
                         Status
                     </p>
                     <select
-                       value={
+                        value={
                             businessUnit.active
                                 ? "Active"
                                 : "Inactive"
                         }
-                        onChange={(e)=>
+                        onChange={(e) =>
                             onStatusChange?.(
                                 e.target.value
                             )
@@ -162,6 +163,21 @@ export default function BusinessUnitDetails({
             {/* Divider */}
 
             <div className="mt-1 mb-0.5 border-t border-gray-200" />
+            <ChildItemsTable
+                title="Analysis Codes under this Business Unit"
+                items={businessUnit?.analysisCodes || []}
+                total={businessUnit?.totalAnalysisCodes}
+                columns={[
+                    {
+                        key: "code",
+                        label: "Analysis Code",
+                    },
+                    {
+                        key: "name",
+                        label: "Analysis Name",
+                    },
+                ]}
+            />
         </div>
     );
 }

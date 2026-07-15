@@ -1,6 +1,7 @@
 import { Pencil, Edit3 } from "lucide-react";
 import AvatarBadge from "../AvatarBadge";
 import StatusBadge from "../StatusBadge";
+import ChildItemsTable from "../masterdata/ChildItemsTable";
 
 
 function InfoField({ label, children }) {
@@ -166,6 +167,21 @@ export default function ParentDivisionDetails({
 
             {/* Divider */}
             <div className="mt-1 mb-0.5 border-t border-gray-200" />
+            <ChildItemsTable
+                title="Subdivisions under this Parent Division"
+                items={division?.subdivisions || []}
+                total={division?.totalSubdivisions}
+                columns={[
+                    {
+                        key: "code",
+                        label: "Subdivision Code",
+                    },
+                    {
+                        key: "name",
+                        label: "Subdivision Name",
+                    },
+                ]}
+            />
         </div>
     );
 }

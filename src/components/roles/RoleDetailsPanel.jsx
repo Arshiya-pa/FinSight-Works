@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Eye,
   Download,
@@ -10,6 +10,8 @@ import PermissionTable from "./PermissionTable";
 
 export default function RoleDetailsPanel({ role }) {
   const [activeTab, setActiveTab] = useState("permissions");
+  const selectAllRef = useRef(null);
+  const clearAllRef = useRef(null);
 
   const tabs = [
     {
@@ -73,7 +75,7 @@ export default function RoleDetailsPanel({ role }) {
 
       {/* Form */}
 
-      <div className="px-3 py-1.5">
+      <div className="px-3 py-1 h-20 flex flex-col">
 
         <div
           className="
@@ -280,21 +282,21 @@ export default function RoleDetailsPanel({ role }) {
 
             <div className="flex flex-wrap items-center gap-2">
 
-              <label className="flex cursor-pointer items-center gap-1 text-[9px]">
-                <input
-                  type="checkbox"
-                  className="h-2.5 w-2.5 rounded border-gray-300"
-                />
-                All
-              </label>
+              <button
+                type="button"
+                onClick={() => selectAllRef.current?.()}
+                className="rounded border border-gray-300 px-2 py-0.5 text-[9px] hover:bg-gray-100"
+              >
+                Select All
+              </button>
 
-              <label className="flex cursor-pointer items-center gap-1 text-[9px]">
-                <input
-                  type="checkbox"
-                  className="h-2.5 w-2.5 rounded border-gray-300"
-                />
-                None
-              </label>
+              <button
+                type="button"
+                onClick={() => clearAllRef.current?.()}
+                className="rounded border border-gray-300 px-2 py-0.5 text-[9px] hover:bg-gray-100"
+              >
+                Clear All
+              </button>
 
               <span className="flex items-center gap-1 text-[9px] text-gray-600">
                 <Eye className="h-2.5 w-2.5 text-blue-600" />
@@ -321,7 +323,11 @@ export default function RoleDetailsPanel({ role }) {
           </div>
 
           {/* Permission Table */}
-          <PermissionTable compact />
+          
+          <PermissionTable
+            onSelectAll={selectAllRef}
+            onClearAll={clearAllRef}
+          />
 
           {/* Footer */}
           <div

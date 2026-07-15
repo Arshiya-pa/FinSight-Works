@@ -1,7 +1,7 @@
 import { Pencil, Edit3 } from "lucide-react";
 import AvatarBadge from "../AvatarBadge";
 import StatusBadge from "../StatusBadge";
-import LegalEntitiesTable from "./LegalEntitiesTable";
+import ChildItemsTable from "../masterdata/ChildItemsTable";
 
 function InfoField({ label, children }) {
   return (
@@ -28,7 +28,7 @@ export default function LegalGroupDetails({
   if (!group) return null;
 
   return (
-   <div className="flex h-full min-h-0 flex-col rounded-lg border border-gray-200 bg-white px-4 pt-2 pb-1 shadow-sm">
+    <div className="flex h-full min-h-0 flex-col rounded-lg border border-gray-200 bg-white px-4 pt-2 pb-1 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between h-7">
         <h2 className="text-[15px] font-semibold text-gray-900">
@@ -58,21 +58,21 @@ export default function LegalGroupDetails({
         <AvatarBadge
           initials={
             group.legal_group_name
-              ?.substring(0,2)
+              ?.substring(0, 2)
               .toUpperCase()
           }
-         />
+        />
 
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-[13px] font-semibold text-gray-900">
-             {group.legal_group_name}
+              {group.legal_group_name}
             </h3>
 
-             <StatusBadge
+            <StatusBadge
               label={group.active ? "Active" : "Inactive"}
               tone={group.active ? "green" : "gray"}
-             />
+            />
           </div>
 
           <p className="text-[10px] text-gray-500">
@@ -83,20 +83,20 @@ export default function LegalGroupDetails({
 
 
       {/* Information */}
-     <div className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2">
+      <div className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2">
 
         <InfoField label="Code">
-        {group.legal_group_code}
+          {group.legal_group_code}
         </InfoField>
 
         <InfoField label="Created On">
-         {group.createdOn || "-"}
+          {group.createdOn || "-"}
         </InfoField>
 
         <InfoField label="Description">
-        {group.description || "-"}
-       </InfoField>
-       
+          {group.description || "-"}
+        </InfoField>
+
         <InfoField label="Last Updated By">
           {group.updatedBy || "-"}
         </InfoField>
@@ -121,7 +121,7 @@ export default function LegalGroupDetails({
 
 
         <InfoField label="Last Updated On">
-          {group.updatedOn|| "-"}
+          {group.updatedOn || "-"}
         </InfoField>
 
         <InfoField label="No. of Legal Entities">
@@ -140,10 +140,21 @@ export default function LegalGroupDetails({
 
 
       {/* Table */}
-      <LegalEntitiesTable
-        entities={entities}
-        total={group.legalEntityCount}
-        onViewAll={onViewAll}
+      <ChildItemsTable
+        title="Legal Entities under this Legal Group"
+        items={group?.legalEntities || []}
+        total={group?.totalEntities}
+        onViewAll={() => console.log("View All")}
+        columns={[
+          {
+            key: "code",
+            label: "Entity Code",
+          },
+          {
+            key: "name",
+            label: "Legal Entity Name",
+          },
+        ]}
       />
 
     </div>

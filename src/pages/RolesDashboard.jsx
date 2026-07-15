@@ -31,8 +31,9 @@ export default function RolesDashboard() {
   const [editRole, setEditRole] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [showEditConfirm, setShowEditConfirm] = useState(false);
-  const [selectedEditRole, setSelectedEditRole] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmAction, setConfirmAction] = useState("");
+  const [selectedRoleAction, setSelectedRoleAction] = useState(null);
 
   /*---load roles from database---*/
   const fetchRoles = async () => {
@@ -158,35 +159,65 @@ export default function RolesDashboard() {
     fetchRoles();
   }, []);
 
-  const handleToggleStatus = async (role) => {
-  try {
-    const payload = {
-      role_code: role.role_code,
-      role_name: role.role_name || role.name,
-      active: !role.active,
-    };
+  const handleToggleStatus = (role) => {
+    setSelectedRoleAction(role);
+    setConfirmAction(role.active ? "deactivate" : "activate");
+    setShowConfirm(true);
+  };
 
-    await updateRole(role.role_code, payload);
+  const updateRoleStatus = async (role) => {
+    try {
+      const payload = {
+        role_code: role.role_code,
+        role_name: role.role_name || role.name,
+        active: !role.active,
+      };
 
-    toast.success(
-      role.active
-        ? "Role deactivated successfully"
-        : "Role activated successfully"
-    );
+      await updateRole(role.role_code, payload);
 
-    fetchRoles();
-  } catch (error) {
-    console.error(error);
-
-    if (error.response) {
-      toast.error(
-        error.response.data.detail || "Failed to update role status"
+      toast.success(
+        role.active
+          ? "Role deactivated successfully"
+          : "Role activated successfully"
       );
-    } else {
-      toast.error("Unable to connect to server");
+
+      fetchRoles();
+    } catch (error) {
+      console.error(error);
+
+      if (error.response) {
+        toast.error(
+          error.response.data.detail || "Failed to update role status"
+        );
+      } else {
+        toast.error("Unable to connect to server");
+      }
     }
-  }
-};
+  };
+
+  const handleConfirm = async () => {
+    if (confirmAction === "edit") {
+      setEditRole(selectedRoleAction);
+      setShowRoleModal(true);
+    }
+
+    if (
+      confirmAction === "activate" ||
+      confirmAction === "deactivate"
+    ) {
+      await updateRoleStatus(selectedRoleAction);
+    }
+
+    setShowConfirm(false);
+    setSelectedRoleAction(null);
+    setConfirmAction("");
+  };
+
+  const handleCancel = () => {
+    setShowConfirm(false);
+    setSelectedRoleAction(null);
+    setConfirmAction("");
+  };
   return (
     <>
       {/* Header */}
@@ -257,10 +288,11 @@ export default function RolesDashboard() {
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
 
-             onEdit={(role) => {
-               setSelectedEditRole(role);
-               setShowEditConfirm(true);
-             }}
+              onEdit={(role) => {
+                setSelectedRoleAction(role);
+                setConfirmAction("edit");
+                setShowConfirm(true);
+              }}
 
               currentPage={currentPage}
               totalPages={totalPages}
@@ -273,7 +305,7 @@ export default function RolesDashboard() {
               onNext={handleNext}
               onFirst={handleFirst}
               onLast={handleLast}
-               onToggleStatus={handleToggleStatus}
+              onToggleStatus={handleToggleStatus}
             />
           </div>
         </div>
@@ -289,14 +321,14 @@ export default function RolesDashboard() {
         </div>
       </div>
 
-       {/* FOOTER */}
-          <div className="fixed bottom-0 left-55 right-0 border-t border-gray-200 bg-white px-0.5 py-0 shadow-sm">
-            <FooterNote
-              title="Note:"
-              message="Changes to role permission will affect all users assigned to this role."
-            />
-           </div>
-    
+      {/* FOOTER */}
+      <div className="fixed bottom-0 left-55 right-0 border-t border-gray-200 bg-white px-0.5 py-0 shadow-sm">
+        <FooterNote
+          title="Note:"
+          message="Changes to role permission will affect all users assigned to this role."
+        />
+      </div>
+
       <AddRoleModal
         open={showRoleModal}
         onClose={() => {
@@ -309,22 +341,35 @@ export default function RolesDashboard() {
         }}
       />
 
-    <ConfirmationModel
-       open={showEditConfirm}
-       title="Edit Role"
-       message="Do you want to edit this role?"
-       confirmText="Edit"
-       cancelText="Cancel"
-       onCancel={() => {
-         setShowEditConfirm(false);
-         setSelectedEditRole(null);
-       }}
-       onConfirm={() => {
-         setShowEditConfirm(false);
-         setEditRole(selectedEditRole);
-         setShowRoleModal(true);
-       }}
-    />
+      <ConfirmationModel
+        open={showConfirm}
+        title={
+          confirmAction === "edit"
+            ? "Edit Role"
+            : confirmAction === "deactivate"
+              ? "Deactivate Role"
+              : "Activate Role"
+        }
+        message={
+          selectedRoleAction
+            ? confirmAction === "edit"
+              ? `Do you want to edit ${selectedRoleAction.role_name || selectedRoleAction.name}?`
+              : confirmAction === "deactivate"
+                ? `Are you sure you want to deactivate ${selectedRoleAction.role_name || selectedRoleAction.name}?`
+                : `Are you sure you want to activate ${selectedRoleAction.role_name || selectedRoleAction.name}?`
+            : ""
+        }
+        confirmText={
+          confirmAction === "edit"
+            ? "Edit"
+            : confirmAction === "deactivate"
+              ? "Deactivate"
+              : "Activate"
+        }
+        cancelText="Cancel"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </>
   );
 }

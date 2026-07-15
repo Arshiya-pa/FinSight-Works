@@ -46,8 +46,9 @@ export default function UsersDashboard() {
   const [editingUser, setEditingUser] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const [showEditConfirm, setShowEditConfirm] = useState(false);
-  const [userToEdit, setUserToEdit] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmAction, setConfirmAction] = useState("");
+  const [selectedConfirmUser, setSelectedConfirmUser] = useState(null);
 
   /* -------------------- PAGINATION -------------------- */
   const [currentPage, setCurrentPage] = useState(1);
@@ -277,8 +278,9 @@ export default function UsersDashboard() {
   };
   /* -------------------- EDIT USER FORM-------------------- */
   const handleEdit = (user) => {
-    setUserToEdit(user);
-    setShowEditConfirm(true);
+    setSelectedConfirmUser(user);
+    setConfirmAction("edit");
+    setShowConfirm(true);
     <div className="w-90 rounded-xl border border-gray-200 bg-white p-4 shadow-xl">
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
@@ -318,19 +320,37 @@ export default function UsersDashboard() {
     </div>
   };
 
-  const handleConfirmEdit = () => {
-    setShowEditConfirm(false);
-    setSelectedUser(userToEdit);
-    setShowEditUser(true);
-    setUserToEdit(null);
+  const handleConfirm = async () => {
+    if (confirmAction === "edit") {
+      setSelectedUser(selectedConfirmUser);
+      setShowEditUser(true);
+    }
+
+    if (
+      confirmAction === "deactivate" ||
+      confirmAction === "activate"
+    ) {
+      await updateStatus(selectedConfirmUser);
+    }
+
+    setShowConfirm(false);
+    setSelectedConfirmUser(null);
+    setConfirmAction("");
   };
 
-  const handleCancelEdit = () => {
-    setShowEditConfirm(false);
-    setUserToEdit(null);
+  const handleCancel = () => {
+    setShowConfirm(false);
+    setSelectedConfirmUser(null);
+    setConfirmAction("");
   };
 
-  const handleToggleStatus = async (user) => {
+  const handleToggleStatus = (user) => {
+    setSelectedConfirmUser(user);
+    setConfirmAction(user.active ? "deactivate" : "activate");
+    setShowConfirm(true);
+  };
+
+  const updateStatus = async (user) => {
     try {
       const payload = {
         employee_code: user.raw.employee_code,
@@ -542,17 +562,33 @@ export default function UsersDashboard() {
       />
 
       <ConfirmationModel
-        open={showEditConfirm}
-        title="Edit User"
+        open={showConfirm}
+        title={
+          confirmAction === "edit"
+            ? "Edit User"
+            : confirmAction === "deactivate"
+              ? "Deactivate User"
+              : "Activate User"
+        }
         message={
-          userToEdit
-            ? `Do you want to edit ${userToEdit.name}?`
+          selectedConfirmUser
+            ? confirmAction === "edit"
+              ? `Do you want to edit ${selectedConfirmUser.name}?`
+              : confirmAction === "deactivate"
+                ? `Are you sure you want to deactivate ${selectedConfirmUser.name}?`
+                : `Are you sure you want to activate ${selectedConfirmUser.name}?`
             : ""
         }
-        confirmText="Edit"
+        confirmText={
+          confirmAction === "edit"
+            ? "Edit"
+            : confirmAction === "deactivate"
+              ? "Deactivate"
+              : "Activate"
+        }
         cancelText="Cancel"
-        onConfirm={handleConfirmEdit}
-        onCancel={handleCancelEdit}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
       />
     </div>
   );

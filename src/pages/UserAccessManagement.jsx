@@ -17,18 +17,23 @@ import UserDetails from "../components/users/UserDetails";
 import FooterNote from "../components/FooterNote";
 import AddUserModal from "../components/users/AddUserModal";
 import SelectedUserCard from "../components/userAccess/SelectUserCard";
-import {
-    stats,
-    departments,
-} from "../data/dummyData";
+import { stats, departments, } from "../data/dummyData";
 import { getUserAccessSummary } from "../api/userAccessApi";
 import { getUsers, getRoles, getLegalGroups, updateUserStatus } from "../api/userApi";
+import { getUserAccess, saveUserAccess, } from "../api/userAccessApi";
+import buildHierarchy from "../utils/buildHierarchy";
+import {
+    getLegalEntities,
+    getParentDivision,
+    getSubDivision,
+    getBusinessunits,
+    getAnalysisCodes
+} from "../api/masterLegalApi";
 
 
 export default function UserAccessMangement() {
 
     /* -------------------- STATES -------------------- */
-
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("All");
 
@@ -51,9 +56,13 @@ export default function UserAccessMangement() {
     const [saving, setSaving] = useState(false);
     const [showEditConfirm, setShowEditConfirm] = useState(false);
     const [userToEdit, setUserToEdit] = useState(null);
-    const [selectedAccess, setSelectedAccess] = useState([]);
 
     const [summaryCards, setSummaryCards] = useState([]);
+
+    const [hierarchyTree, setHierarchyTree] = useState([]);
+    const [selectedAccess, setSelectedAccess] = useState([]);
+    const [accessSummary, setAccessSummary] = useState({});
+
 
     /* -------------------- PAGINATION -------------------- */
     const [currentPage, setCurrentPage] = useState(1);
@@ -95,16 +104,22 @@ export default function UserAccessMangement() {
             }));
 
             setUsers(formattedUsers);
+            if (formattedUsers.length > 0) {
 
-            setSelectedUser((prev) => {
-                if (prev) {
-                    const updatedSelected = formattedUsers.find(
-                        (item) => item.id === prev.id
-                    );
-                    return updatedSelected || formattedUsers[0];
+                let userToSelect = formattedUsers[0];
+
+                if (selectedUser) {
+                    userToSelect =
+                        formattedUsers.find(
+                            (u) => u.id === selectedUser.id
+                        ) || formattedUsers[0];
                 }
-                return formattedUsers[0];
-            });
+
+                setSelectedUser(userToSelect);
+
+                // Automatically load this user's access
+                await loadUserAccess(userToSelect.id);
+            }
 
         } catch (error) {
             console.error("Users API Error:", error);
@@ -165,60 +180,103 @@ export default function UserAccessMangement() {
     };
     // called from SelectedUserCard
     const handleSaveClick = () => {
-
         setShowConfirm(true);
-
     };
 
+    {/*------Load HierarchyTree---------*/ }
+    const loadOrganizationHierarchy = async () => {
+        const [
+            legalGroups,
+            legalEntities,
+            parentDivisions,
+            subdivisions,
+            businessUnits,
+            analysisCodes
+        ] = await Promise.all([
+            getLegalGroups(),
+            getLegalEntities(),
+            getParentDivision(),
+            getSubDivision(),
+            getBusinessunits(),
+            getAnalysisCodes()
+        ]);
+        const tree = buildHierarchy(
+            legalGroups.data,
+            legalEntities.data,
+            parentDivisions.data,
+            subdivisions.data,
+            businessUnits.data,
+            analysisCodes.data
+        );
+        console.log("TREE", tree);
+        setHierarchyTree(tree);
+    };
+
+    const loadUserAccess = async (userId) => {
+        try {
+            const { data } = await getUserAccess(userId);
+
+            const selected = [];
+
+            data.forEach((item) => {
+                if (item.legal_group_id)
+                    selected.push(`LG_${item.legal_group_id}`);
+
+                if (item.legal_entity_id)
+                    selected.push(`LE_${item.legal_entity_id}`);
+
+                if (item.parent_division_id)
+                    selected.push(`PD_${item.parent_division_id}`);
+
+                if (item.subdivision_id)
+                    selected.push(`SD_${item.subdivision_id}`);
+
+                if (item.business_unit_id)
+                    selected.push(`BU_${item.business_unit_id}`);
+
+                if (item.analysis_code_id)
+                    selected.push(`AC_${item.analysis_code_id}`);
+            });
+
+            setSelectedAccess(selected);
+
+            console.log("Selected Access:", selected);
+
+        } catch (error) {
+            console.error("Failed to load user access", error);
+        }
+    };
+
+    {/*.........When a user is selected........... */ }
+    const handleUserSelect = async (user) => {
+        setSelectedUser(user);
+        await loadUserAccess(user.id);
+    };
 
     const handleConfirmSave = async () => {
-
         try {
-
             setSaving(true);
-
-
             const payload = {
-
                 userId: selectedUser.id,
-
                 access: selectedAccess
-
             };
-
-
             console.log(
                 "UPDATE ACCESS PAYLOAD",
                 payload
             );
-
-
             // await updateUserAccess(payload);
-
-
             toast.success(
                 "User access updated successfully"
             );
-
-
             setShowConfirm(false);
-
-
         } catch (error) {
-
             console.log(error);
-
             toast.error(
                 "Failed to update access"
             );
-
-
         } finally {
-
             setSaving(false);
-
         }
-
     };
 
     /* -------------------- FETCH CARDS DATA -------------------- */
@@ -291,10 +349,17 @@ export default function UserAccessMangement() {
     /* -------------------- PAGE LOAD -------------------- */
 
     useEffect(() => {
+
+        loadOrganizationHierarchy();
+
         fetchUsers();
+
         fetchRoles();
+
         fetchLegalGroups();
+
         fetchSummaryCards();
+
     }, []);
     useEffect(() => {
         setCurrentPage(1);
@@ -306,6 +371,27 @@ export default function UserAccessMangement() {
         legalGroup,
         activeOnly,
     ]);
+    {/*.... Get Access Summary......*/ }
+    useEffect(() => {
+        const summary = {
+            legalGroups: 0,
+            legalEntities: 0,
+            parentDivisions: 0,
+            subdivisions: 0,
+            businessUnits: 0,
+            analysisCodes: 0,
+        };
+
+        selectedAccess.forEach((id) => {
+            if (id.startsWith("LG_")) summary.legalGroups++;
+            if (id.startsWith("LE_")) summary.legalEntities++;
+            if (id.startsWith("PD_")) summary.parentDivisions++;
+            if (id.startsWith("SD_")) summary.subdivisions++;
+            if (id.startsWith("BU_")) summary.businessUnits++;
+            if (id.startsWith("AC_")) summary.analysisCodes++;
+        });
+        setAccessSummary(summary);
+    }, [selectedAccess]);
 
     /* -------------------- RESET FILTERS -------------------- */
 
@@ -541,9 +627,17 @@ export default function UserAccessMangement() {
                 <PageHeader
                     title="User Access Management"
                     subtitle="Manage users and define their access to Legal Entities,Divisions,SubDivisions and BusinessUnits."
-                    buttonText="Add User"
-                    buttonIcon={UserPlus}
-                    onButtonClick={() => setShowAddUser(true)}
+                    buttonText="Assign Access"
+                    buttonIcon={Shield}
+                    onButtonClick={() => {
+                        if (!selectedUser) {
+                            toast("Please select a user first.");
+                            return;
+                        }
+
+                        setUserToEdit(selectedUser);
+                        setShowEditConfirm(true);
+                    }}
                 />
 
                 <AddUserModal
@@ -622,13 +716,12 @@ export default function UserAccessMangement() {
                             onLast={handleLast}
                             onPageSizeChange={handlePageSizeChange}
                             selectedId={selectedUser?.id}
-                            onSelect={(user) => {
-                                setSelectedUser(user);
-                            }} />
+                            onSelect={handleUserSelect} />
                     </div>
                     {/* ================= HIERARCHY 30% ================= */}
                     <div className="min-w-0 h-full min-h-0 overflow-hidden flex ">
                         <HierarchyTree
+                            tree={hierarchyTree}
                             selectedUser={selectedUser}
                             selected={selectedAccess}
                             setSelected={setSelectedAccess}
@@ -641,6 +734,7 @@ export default function UserAccessMangement() {
                             selectedUser && (
                                 <SelectedUserCard
                                     user={selectedUser}
+                                    accessSummary={accessSummary}
                                     onSave={() => setShowConfirm(true)}
                                     onClose={() => {
                                         setSelectedUser(null);
@@ -671,12 +765,11 @@ export default function UserAccessMangement() {
             />
             <ConfirmationModel
                 open={showEditConfirm}
-                title="Edit User?"
+                title="Assign Access?"
                 message={
-                    `Are you sure you want to edit ${userToEdit?.name || "this user"
-                    }?`
+                    `Do you want to assign access for ${userToEdit?.name}?`
                 }
-                confirmText="Edit"
+                confirmText="Assign Access"
                 cancelText="Cancel"
                 onCancel={handleCancelEdit}
                 onConfirm={handleConfirmEdit}

@@ -10,13 +10,11 @@ import {
 
 
 export default function SelectedUserCard({
-
     user,
+    accessSummary,
     onSave,
     onClose
-
 }){
-
     if (!user) {
         return (
             <div
@@ -43,42 +41,41 @@ export default function SelectedUserCard({
     const accessRows = [
         {
             label: "Legal Groups",
-            value: user.access?.legalGroups ?? 0,
+           value: accessSummary.legalGroups,
             icon: Building2,
             iconColor: "text-blue-500",
         },
         {
             label: "Legal Entities",
-            value: user.access?.legalEntities ?? 0,
+            value: accessSummary.legalEntities,
             icon: Building,
             iconColor: "text-purple-500",
         },
         {
             label: "Parent Divisions",
-            value: user.access?.parentDivisions ?? 0,
+           value: accessSummary.parentDivisions,
             icon: Layers,
             iconColor: "text-orange-500",
         },
         {
             label: "Subdivisions",
-            value: user.access?.subdivisions ?? 0,
+            value: accessSummary.subdivisions,
             icon: GitBranch,
             iconColor: "text-green-500",
         },
         {
             label: "Business Units",
-            value: user.access?.businessUnits ?? 0,
+            value: accessSummary.businessUnits,
             icon: Briefcase,
             iconColor: "text-indigo-500",
         },
         {
             label: "Analysis Codes",
-            value: user.access?.analysisCodes ?? 0,
+            value: accessSummary.analysisCodes,
             icon: BarChart3,
             iconColor: "text-red-500",
         },
     ];
-
 
 
     const assignmentRows = [
