@@ -22,6 +22,7 @@ import { getUserAccessSummary } from "../api/userAccessApi";
 import { getUsers, getRoles, getLegalGroups, updateUserStatus } from "../api/userApi";
 import { getUserAccess, saveUserAccess, } from "../api/userAccessApi";
 import buildHierarchy from "../utils/buildHierarchy";
+import PageSkeleton from "../components/common/PageSkeleton";
 import {
     getLegalEntities,
     getParentDivision,
@@ -611,13 +612,12 @@ export default function UserAccessMangement() {
     /* -------------------- LOADING -------------------- */
 
     if (loading) {
-        return (
-            <div className="p-6 text-sm">
-                Loading...
-            </div>
-        );
-    }
-    console.log("Current Selected User:", selectedUser);
+     return (
+       <div className="p-4">
+         <PageSkeleton />
+       </div>
+     );
+     }
     /* ---------- PART 2 STARTS WITH RETURN ---------- */
     return (
 

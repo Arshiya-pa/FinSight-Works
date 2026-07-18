@@ -12,6 +12,7 @@ import UserDetails from "../components/users/UserDetails";
 import FooterNote from "../components/FooterNote";
 import AddUserModal from "../components/users/AddUserModal";
 import ConfirmationModel from "../components/common/ConfirmationModel";
+import PageSkeleton from "../components/common/PageSkeleton";
 
 import {
   stats,
@@ -46,6 +47,7 @@ export default function UsersDashboard() {
   const [editingUser, setEditingUser] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmAction, setConfirmAction] = useState("");
   const [selectedConfirmUser, setSelectedConfirmUser] = useState(null);
@@ -420,17 +422,15 @@ export default function UsersDashboard() {
   console.log("Active Only:", activeOnly);
   /* -------------------- LOADING -------------------- */
 
-  if (loading) {
-    return (
-      <div className="p-6 text-sm">
-        Loading Users...
-      </div>
-    );
-  }
-  console.log("Current Selected User:", selectedUser);
+      if (loading) {
+        return (
+          <div className="p-4">
+            <PageSkeleton />
+          </div>
+        );
+      }
   /* ---------- PART 2 STARTS WITH RETURN ---------- */
   return (
-
     <div className="flex flex-col gap-0.5">
       {/* HEADER */}
       <div>

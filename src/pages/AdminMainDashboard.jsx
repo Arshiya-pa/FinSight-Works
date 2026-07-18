@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import PageHeader from "../components/common/PageHeader";
 import DashboardKPICard from "../components/AdminDashboard/DashboardKPICard";
@@ -9,13 +9,44 @@ import TrendChart from "../components/AdminDashboard/TrendChart";
 import QualityChart from "../components/AdminDashboard/QualityChart";
 import AlertsCard from "../components/AdminDashboard/AlertsCard";
 import FooterNote from "../components/FooterNote";
-
+import PageSkeleton from "../components/common/PageSkeleton";
 import { kpiCards } from "../data/adminDashboardData";
 
 
 export default function AdminMainDashboard() {
 
-  return (
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+
+        const timer = setTimeout(() => {
+
+            setLoading(false);
+
+        }, 1000);
+
+
+        return () => clearTimeout(timer);
+
+    }, []);
+
+
+    if (loading) {
+
+        return (
+
+            <div className="p-4">
+
+                <PageSkeleton />
+
+            </div>
+
+        );
+
+    }
+
+
+    return (
 
     <div className="space-y-1">
 

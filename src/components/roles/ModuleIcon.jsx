@@ -1,40 +1,30 @@
 import {
   LayoutDashboard,
-  BarChart3,
+  DollarSign,
   Wallet,
-  Database,
+  CreditCard,
+  Boxes,
+  Landmark,
+  TrendingUp,
+  Scale,
+  Banknote,
+  Building2,
   FileText,
-  Settings,
   Users,
 } from "lucide-react";
 
-
 export const moduleIcons = {
-
   Dashboard: LayoutDashboard,
-
-  "Sales Revenue": BarChart3,
-
+  "Sales Revenue": DollarSign,
   Receivables: Wallet,
-
-  Payables: Wallet,
-
-  Inventory: Database,
-
-  "Working Capital": Wallet,
-
-  "Profit & Loss": FileText,
-
-  "Balance Sheet": FileText,
-
-  "Cash Flow": BarChart3,
-
-  "Fixed Assets": Database,
-
-  "Bank Facilities": Wallet,
-
-  "Report Configuration": Settings,
-
+  Payables: CreditCard,
+  Inventory: Boxes,
+  "Working Capital": Landmark,
+  "Profit & Loss": TrendingUp,
+  "Balance Sheet": Scale,
+  "Cash Flow": Banknote,
+  "Fixed Assets": Building2,
+  "Bank Facilities": Landmark,
+  "Report Configuration": FileText,
   "User Management": Users,
-
 };

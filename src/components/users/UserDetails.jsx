@@ -1,6 +1,8 @@
-import { useState } from "react";
+
 import toast, { Toaster } from "react-hot-toast";
 import { Info } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getUserAccess } from "../../api/userAccessApi";
 import {
   X,
   KeyRound,
@@ -10,6 +12,7 @@ import {
 } from "lucide-react";
 
 import StatusBadge from "../StatusBadge";
+import RoleAccessTab from "./RoleAccessTab";
 
 const tabs = [
   "Profile",
@@ -54,16 +57,38 @@ export default function UserDetails({
   onClose,
 }) {
 
-  const [tab,setTab] = useState("Profile");
+  const [tab, setTab] = useState("Profile");
+  const [userAccess, setUserAccess] = useState(null);
+  const [loadingAccess, setLoadingAccess] = useState(false);
 
-  if(!user){
-    return null;
+  // if (!user) {
+  //   return null;
+  // }
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadAccess();
+  }, [user]);
+
+  const loadAccess = async () => {
+    try {
+      setLoadingAccess(true);
+      const res = await getUserAccess(user.id);
+      setUserAccess(
+      Array.isArray(res.data)
+        ? res.data
+        : [res.data]
+      );
+    }
+    finally {
+      setLoadingAccess(false);
+    }
   }
 
   const initials = user.name
     ?.split(" ")
-    .map((n)=>n[0])
-    .slice(0,2)
+    .map((n) => n[0])
+    .slice(0, 2)
     .join("")
     .toUpperCase();
 
@@ -109,7 +134,7 @@ export default function UserDetails({
             hover:bg-gray-100
           "
         >
-          <X className="h-4 w-4"/>
+          <X className="h-4 w-4" />
         </button>
       </div>
 
@@ -163,8 +188,8 @@ export default function UserDetails({
               label={user.status}
               tone={
                 user.status === "Active"
-                ? "green"
-                : "gray"
+                  ? "green"
+                  : "gray"
               }
               className="
                 px-2
@@ -195,10 +220,10 @@ export default function UserDetails({
         px-2
       ">
 
-        {tabs.map((item)=>(
+        {tabs.map((item) => (
           <button
             key={item}
-            onClick={()=>setTab(item)}
+            onClick={() => setTab(item)}
             className={`
               border-b-2
               px-3
@@ -206,8 +231,7 @@ export default function UserDetails({
               text-[11px]
               font-medium
 
-              ${
-                tab===item
+              ${tab === item
                 ? "border-blue-600 text-blue-600"
                 : "border-transparent text-gray-500"
               }
@@ -227,7 +251,7 @@ export default function UserDetails({
         py-3
       ">
 
-        {tab==="Profile" && (
+        {tab === "Profile" && (
 
           <div className="
             grid
@@ -279,11 +303,11 @@ export default function UserDetails({
                   text-green-600
                   text-[11px]
                 ">
-                  <CheckCircle2 className="h-3 w-3"/>
+                  <CheckCircle2 className="h-3 w-3" />
                   {
                     user.emailVerified
-                    ? "Verified"
-                    : "Not Verified"
+                      ? "Verified"
+                      : "Not Verified"
                   }
                 </span>
               }
@@ -299,12 +323,12 @@ export default function UserDetails({
                   text-[11px]
                 ">
 
-                  <CheckCircle2 className="h-3 w-3"/>
+                  <CheckCircle2 className="h-3 w-3" />
 
                   {
                     user.mfaEnabled
-                    ? "Enabled"
-                    : "Disabled"
+                      ? "Enabled"
+                      : "Disabled"
                   }
 
                 </span>
@@ -313,25 +337,20 @@ export default function UserDetails({
           </div>
         )}
 
-        {tab!=="Profile" && (
-
-          <div className="
-            py-10
-            text-center
-            text-[13px]
-            text-gray-500
-          ">
-
-            {tab} details will appear here.
-
-          </div>
-
+        {tab === "Roles & Access" && (
+          <RoleAccessTab
+            user={user}
+            access={userAccess}
+            loading={loadingAccess}
+          />
         )}
       </div>
 
       {/* FOOTER */}
+      {
+        tab !== "Roles & Access" && (
 
-      <div className="
+          <div className="
         grid
         shrink-0
         grid-cols-3
@@ -342,32 +361,35 @@ export default function UserDetails({
         py-2
       ">
 
-        <button  onClick={() => {
-           toast.custom(() => (
-       <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 shadow-lg">
-       <Info className="h-5 w-5 text-red-600" />
-       <span className="text-md font-medium text-blue-900">
-         Reset password will be available shortly.
-       </span>
-       </div>
-        )); }}
-         className="flex h-7 items-center justify-center gap-1 rounded-md border border-gray-200 text-[11px]">
-          <KeyRound className="h-3 w-3"/>
-          Reset Password
-        </button>
+            <button onClick={() => {
+              toast.custom(() => (
+                <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 shadow-lg">
+                  <Info className="h-5 w-5 text-red-600" />
+                  <span className="text-md font-medium text-blue-900">
+                    Reset password will be available shortly.
+                  </span>
+                </div>
+              ));
+            }}
+              className="flex h-7 items-center justify-center gap-1 rounded-md border border-gray-200 text-[11px]">
+              <KeyRound className="h-3 w-3" />
+              Reset Password
+            </button>
 
-        <button className=" flex h-7 items-center justify-center gap-1 rounded-md border border-red-200
+            <button className=" flex h-7 items-center justify-center gap-1 rounded-md border border-red-200
           text-[11px] text-red-600 ">
-          <UserX className="h-3 w-3"/>
-          Deactivate
-        </button>
+              <UserX className="h-3 w-3" />
+              Deactivate
+            </button>
 
-        <button className=" flex h-7 items-center justify-center gap-1 rounded-md bg-blue-600
+            <button className=" flex h-7 items-center justify-center gap-1 rounded-md bg-blue-600
           text-[11px] text-white">
-          <Edit className="h-3 w-3"/>
-          Edit User
-        </button>
-      </div>
+              <Edit className="h-3 w-3" />
+              Edit User
+            </button>
+          </div>
+        )
+      }
     </aside>
   );
 }

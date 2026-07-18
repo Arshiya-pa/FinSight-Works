@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
-
+import PageSkeleton from "../components/common/PageSkeleton";
 import PageHeader from "../components/common/PageHeader";
 import StatCard from "../components/StatCard";
 import FilterBar from "../components/common/FilterBar";
@@ -16,6 +16,7 @@ import { roleStats, roles } from "../data/rolesData";
 import { statuses } from "../data/dummyData";
 
 import { addRole, getRole, updateRole } from "../api/rolesApi"
+import { getUsers } from "../api/userApi";
 
 
 export default function RolesDashboard() {
@@ -30,11 +31,30 @@ export default function RolesDashboard() {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [editRole, setEditRole] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmAction, setConfirmAction] = useState("");
   const [selectedRoleAction, setSelectedRoleAction] = useState(null);
 
+ /*---load users from database---*/
+  const fetchUsers = async () => {
+  try {
+    const response = await getUsers();
+    const formattedUsers = response.data.map((user) => ({
+      id: user.user_profile_id,
+      code: user.employee_code,
+      name: user.employee_name,
+      department: user.department ?? "-",
+      role: user.role_code,
+      active: user.active,
+      raw: user,
+    }));
+    setUsers(formattedUsers);
+  } catch (error) {
+    console.error("Users API Error", error);
+  }
+ };
   /*---load roles from database---*/
   const fetchRoles = async () => {
     try {
@@ -157,6 +177,7 @@ export default function RolesDashboard() {
 
   useEffect(() => {
     fetchRoles();
+    fetchUsers();
   }, []);
 
   const handleToggleStatus = (role) => {
@@ -218,6 +239,16 @@ export default function RolesDashboard() {
     setSelectedRoleAction(null);
     setConfirmAction("");
   };
+
+  /* -------------------- LOADING -------------------- */
+
+  if (loading) {
+  return (
+    <div className="p-4">
+      <PageSkeleton />
+    </div>
+  );
+  }
   return (
     <>
       {/* Header */}
@@ -317,6 +348,7 @@ export default function RolesDashboard() {
         >
           <RoleDetailsPanel
             role={selectedRole}
+             users={users}
           />
         </div>
       </div>

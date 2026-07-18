@@ -21,7 +21,7 @@ import BusinessUnitTable from "../components/masterdata/BusinessUnitTable";
 import AnalysisCodeTable from "../components/masterdata/AnalysisCodeTable";
 import SubDivisionDetails from "../components/masterdata/SubDivisionDetails";
 import AnalysisCodeDetails from "../components/masterdata/AnalysisCodeDetails";
-
+import PageSkeleton from "../components/common/PageSkeleton";
 import { masterCards, legalGroupMock, legalEntitiesMock, } from "../data/masterData";
 
 import ConfirmationModel from "../components/common/ConfirmationModel";
@@ -69,6 +69,7 @@ export default function MasterDataDashboard() {
   const [editBusinessUnit, setEditBusinessUnit] = useState(null);
   const [businessUnits, setBusinessUnits] = useState([]);
   const [selectedBusinessUnit, setSelectedBusinessUnit] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [showAnalysisCodeModal, setShowAnalysisCodeModal] = useState(false);
   const [editAnalysisCode, setEditAnalysisCode] = useState(null);
@@ -620,6 +621,15 @@ export default function MasterDataDashboard() {
         );
       }
     };
+
+ 
+       if (loading) {
+         return (
+           <div className="p-4">
+             <PageSkeleton />
+           </div>
+         );
+       }
   return (
     <>
       {/* Header */}

@@ -336,3 +336,98 @@ export const permissionModules = [
     admin: true,
   },
 ];
+
+
+export const roleAccessData = {
+
+    BU_ACCOUNTANT: {
+
+        legalGroups:[
+            "FJ Group",
+            "ABC Group"
+        ],
+
+        legalEntities:[
+            "FJTCO"
+        ],
+
+        parentDivisions:[
+            "Corporate"
+        ],
+
+        subDivisions:[
+            "Finance"
+        ],
+
+        businessUnits:[
+            "Accounts"
+        ],
+
+        analysisCodes:[
+            "1001"
+        ]
+
+    },
+
+
+    FM: {
+
+        legalGroups:[
+            "Finance Group"
+        ],
+
+        legalEntities:[
+            "Finance Entity"
+        ],
+
+        parentDivisions:[
+            "Finance Division"
+        ],
+
+        subDivisions:[],
+
+        businessUnits:[
+            "Accounts"
+        ],
+
+        analysisCodes:[
+             "2001",
+            "2002"
+        ]
+
+    },
+
+    CFO: {
+
+        legalGroups:[
+            "All Groups"
+        ],
+
+        legalEntities:[
+            "All Entities"
+        ],
+
+        parentDivisions:[
+            "All Divisions"
+        ],
+
+        subDivisions:[
+            "All Sub Divisions"
+        ],
+
+        businessUnits:[
+            "All Business Units"
+        ],
+
+        analysisCodes:[
+            "All"
+        ]
+
+    }
+
+};
+export const protectedRoles = [
+    "SUPER_ADMIN",
+    "CFO"
+];
+

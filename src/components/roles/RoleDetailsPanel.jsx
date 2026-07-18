@@ -5,13 +5,34 @@ import {
   Upload,
   Shield,
 } from "lucide-react";
+import ConfirmationModel from "../common/ConfirmationModel";
 
 import PermissionTable from "./PermissionTable";
+import DataAccessScope from "./DataAccessScope";
+import UserAssignment from "./UserAssignment";
+import AuditLog from "./AuditLog";
+import { protectedRoles } from "../../data/rolesData";
+import SaveFooter from "../common/SaveFooter";
 
-export default function RoleDetailsPanel({ role }) {
+export default function RoleDetailsPanel({
+  role,
+  users,
+}) {
+
   const [activeTab, setActiveTab] = useState("permissions");
+  const [loading, setLoading] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingTab, setPendingTab] = useState(null);
+
+  const isProtectedRole =
+    protectedRoles.includes(role?.role_code);
   const selectAllRef = useRef(null);
   const clearAllRef = useRef(null);
+  const [userChanges, setUserChanges] = useState({
+    addedUsers: [],
+    removedUsers: []
+  });
 
   const tabs = [
     {
@@ -31,6 +52,57 @@ export default function RoleDetailsPanel({ role }) {
       label: "Audit Log",
     },
   ];
+
+  const handleSavePermissions = () => {
+
+    console.log("Saving permissions");
+
+    // API later
+    // PUT /roles/{role_code}/permissions
+
+  };
+
+
+  const handleSaveScope = () => {
+
+    console.log("Saving data access scope");
+
+    // API later
+    // PUT /roles/{role_code}/scope
+
+  };
+
+
+  const handleSaveUsers = () => {
+
+    console.log(
+      "ROLE",
+      role.role_code
+    );
+
+    console.log(
+      "ADD USERS",
+      userChanges.addedUsers
+    );
+
+    console.log(
+      "REMOVE USERS",
+      userChanges.removedUsers
+    );
+
+
+    // API HERE
+
+  };
+
+  const handleTabChange = (tab) => {
+    if (hasChanges) {
+      setPendingTab(tab);
+      setShowConfirm(true);
+      return;
+    }
+    setActiveTab(tab);
+  };
   if (!role) {
     return (
       <div className="h-full flex items-center justify-center rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -42,13 +114,6 @@ export default function RoleDetailsPanel({ role }) {
   }
   return (
     <div
-      // className="
-      //   bg-white
-      //   rounded-lg
-      //   border
-      //   border-gray-200
-      //   shadow-sm
-      // "
       className="h-full flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm"
     >
       {/* Header */}
@@ -244,7 +309,7 @@ export default function RoleDetailsPanel({ role }) {
 
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`
                 h-7
                 px-3
@@ -322,12 +387,52 @@ export default function RoleDetailsPanel({ role }) {
 
           </div>
 
-          {/* Permission Table */}
-          
-          <PermissionTable
-            onSelectAll={selectAllRef}
-            onClearAll={clearAllRef}
-          />
+
+          {/* Warning for System Role */}
+
+          {
+            isProtectedRole && (
+              <div
+                className="
+                mb-2
+                rounded
+                border
+                border-yellow-300
+                bg-yellow-50
+                px-3
+                py-2
+                text-[10px]
+                text-yellow-700">
+                ⚠️ This is a system role.
+                Permissions cannot be modified.
+              </div>
+            )
+          }
+
+          {
+            loading ?
+
+              (
+                <div className="p-5 text-center text-xs text-gray-400">
+
+                  Loading permissions...
+
+                </div>
+
+              )
+
+              :
+
+              (
+                <PermissionTable
+                  disabled={isProtectedRole}
+                  onSelectAll={selectAllRef}
+                  onClearAll={clearAllRef}
+                  setDirty={setHasChanges}
+                />
+              )
+
+          }
 
           {/* Footer */}
           <div
@@ -350,7 +455,7 @@ export default function RoleDetailsPanel({ role }) {
             {/* Right */}
             <div className="flex items-center gap-1">
 
-              <button
+              {/* <button
                 type="button"
                 className="
               h-6
@@ -367,44 +472,82 @@ export default function RoleDetailsPanel({ role }) {
             "
               >
                 Cancel
-              </button>
+              </button> */}
 
-              <button
-                type="button"
-                className="
-              h-6
-              px-2.5
-              rounded
-              bg-blue-600
-              text-[10px]
-              font-medium
-              text-white
-              hover:bg-blue-700
-              transition-colors
-            "
-              >
-                Save Changes
-              </button>
-
+              {
+                !isProtectedRole && (
+                  <SaveFooter
+                    buttonText="Save Permissions"
+                    onSave={handleSavePermissions}
+                  />
+                )
+              }
             </div>
           </div>
-
         </div>
-
       )}
 
       {/* Other Tabs */}
+      {activeTab === "scope" && (
 
-      {activeTab !== "permissions" && (
+        <>
+          <DataAccessScope
+            role={role}
+          />
 
-        <div className="flex h-32 items-center justify-center text-[10px] text-gray-400">
-
-          {tabs.find((t) => t.id === activeTab)?.label}
-
-        </div>
-
+          <SaveFooter
+            buttonText="Save Access Scope"
+            onSave={handleSaveScope}
+          />
+        </>
       )}
 
+      {activeTab === "users" && (
+        <UserAssignment
+          role={role}
+          users={users}
+          setDirty={setHasChanges}
+        />
+      )}
+
+      {activeTab === "audit" && (
+        <AuditLog />
+      )}
+
+      <ConfirmationModel
+
+    open={showConfirm}
+
+    title="Unsaved Changes"
+
+    message="
+    You have unsaved changes.
+    Do you want to leave this tab?
+    "
+
+    confirmText="Discard Changes"
+
+    cancelText="Stay Here"
+
+
+    onCancel={()=>{
+        setShowConfirm(false);
+    }}
+
+
+    onConfirm={()=>{
+
+        setHasChanges(false);
+
+        setActiveTab(pendingTab);
+
+        setPendingTab(null);
+
+        setShowConfirm(false);
+
+    }}
+
+/>
     </div>
   );
 }
